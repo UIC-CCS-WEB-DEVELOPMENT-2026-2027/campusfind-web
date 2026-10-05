@@ -1,2 +1,2 @@
 # campusfind-web
-CampusFind Web Project for Caban's Group
+Repository for CampusFind Web Project for Caban's Group.
