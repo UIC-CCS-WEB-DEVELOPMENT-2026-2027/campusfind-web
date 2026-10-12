@@ -1,16 +1,59 @@
-# React + Vite
+# CampusFind - Campus Lost & Found Intelligence Hub 🔍
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+> **CS008.23 - Web Applications Development 1**  
+> **Instructor:** Mr. Joshua M. Cister  
+> **Organization:** UIC-CCS-WEB-DEVELOPMENT-2026-2027  
+> **Group Name:** Galaxy Fighters  
+> **Team Members:** Caban, Antonio, Khee, Larutin, Villaquer  
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 📌 Project Overview
+**CampusFind** is an enterprise web application designed to centralize lost-and-found reporting across university buildings and departments. Students, faculty, and campus security staff often struggle with fragmented reporting across Facebook groups, group chats, or physical desks. CampusFind provides a unified, real-time searchable platform for logging lost/found items, verifying ownership claims, and tracking item statuses from report to retrieval.
 
-## React Compiler
+---
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 🚀 Live Production & Repository Links
+* **Live Web App (Vercel/Netlify):** *[Insert Production URL Here]*
+* **GitHub Repository:** `https://github.com/UIC-CCS-WEB-DEVELOPMENT-2026-2027/campusfind-web`
+* **Agile Kanban Board:** `https://github.com/orgs/UIC-CCS-WEB-DEVELOPMENT-2026-2027/projects/10`
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## 🛠️ Phase 1 Architecture & Tech Stack
+During Phase 1 (Web Dev 1), CampusFind is engineered as a responsive Single-Page Application (SPA) driven by client-side state and mock JSON data models.
+
+* **Frontend Framework:** React.js (Bootstrapped with Vite)
+* **Styling Framework:** Tailwind CSS / CSS3 (Flexbox & Grid Layouts)
+* **Data Layer:** Static JSON (`mockItems.json`) with declarative React State (`useState`, `useEffect`)
+* **Deployment Pipeline:** Automated CI/CD via Vercel / Netlify linked directly to `main` branch
+
+---
+
+## 📅 4-Week Agile Sprint Timeline
+
+### Week 1: Enterprise Setup & Architecture
+- [x] Initialized Vite + React repository within the official GitHub Organization.
+- [x] Assigned team roles (Frontend, QA/Analyst, Systems Lead).
+- [x] Configured continuous integration on Vercel.
+- [x] Drafted project proposal document (`WebDev Galaxy Fighters- Proposal.docx`) and core `README.md`.
+
+### Week 2: Component Shells & UI Assembly
+- [x] Built core `.jsx` component hierarchy (`Navbar`, `ItemCard`, `ItemGrid`, `SearchFilterBar`).
+- [x] Developed responsive dashboard layout with building and category filters.
+- [x] Designed visual empty states ("No matching records found") and modal triggers.
+
+### Week 3: State Logic & Usability QA
+- [x] Wired client-side search logic (`useState`) to filter mock item data in real time.
+- [x] Implemented form validation guard clauses (`.trim()`, `e.preventDefault()`) on item submission and claim modals.
+- [x] Added claim status toggles (`Unclaimed` ➔ `Pending` ➔ `Claimed`).
+
+### Week 4: MVP Showcase & Terminal Defense
+- [x] Finalized live production build deployment on Vercel.
+- [x] Completed Phase 2 Relational Database Pitch & AI Usage Disclosure.
+- [x] Conducted 1-on-1 terminal code defense with Mr. Cister.
+
+---
+
+## 🗄️ Phase 2 Pitch: Relational Database & Backend Architecture
+In Phase 2 (Web Dev 2), CampusFind will transition from client-side mock data to a full-stack enterprise platform featuring a custom Node.js/Express API server and a MySQL/PostgreSQL relational database.
