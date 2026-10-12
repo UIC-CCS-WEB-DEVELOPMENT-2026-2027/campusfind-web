@@ -34,7 +34,7 @@ During Phase 1 (Web Dev 1), CampusFind is engineered as a responsive Single-Page
 
 ### Week 1: Enterprise Setup & Architecture
 - [x] Initialized Vite + React repository within the official GitHub Organization.
-- [x] Assigned team engineering roles (Frontend, QA/Analyst, Systems Lead).
+- [x] Assigned team roles (Frontend, QA/Analyst, Systems Lead).
 - [x] Configured continuous integration on Vercel.
 - [x] Drafted project proposal document (`WebDev Galaxy Fighters- Proposal.docx`) and core `README.md`.
 
