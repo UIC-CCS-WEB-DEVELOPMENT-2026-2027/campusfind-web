@@ -14,9 +14,9 @@
 ---
 
 ## 🚀 Live Production & Repository Links
-* **Live Web App (Vercel/Netlify):** *[Insert Production URL Here]*
-* **GitHub Repository:** `https://github.com/UIC-CCS-WEB-DEVELOPMENT-2026-2027/campusfind-web`
-* **Agile Kanban Board:** `https://github.com/orgs/UIC-CCS-WEB-DEVELOPMENT-2026-2027/projects/10`
+* **Live Web App (Vercel):** (https://campusfind-web-swart.vercel.app/)
+* **GitHub Repository:** (https://github.com/UIC-CCS-WEB-DEVELOPMENT-2026-2027/campusfind-web)
+* **Agile Kanban Board:** (https://github.com/orgs/UIC-CCS-WEB-DEVELOPMENT-2026-2027/projects/10)
 
 ---
 
