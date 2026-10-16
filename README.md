@@ -3,7 +3,7 @@
 > **CS008.23 - Web Applications Development 1**  
 > **Instructor:** Mr. Joshua M. Cister  
 > **Organization:** UIC-CCS-WEB-DEVELOPMENT-2026-2027  
-> **Group Name:** Galaxy Fighters  
+> **Group Name:** Caban's Group  
 > **Team Members:** Caban, Antonio, Khee, Larutin, Villaquer  
 
 ---
