@@ -4,7 +4,7 @@ import LoginForm from './components/Loginform'
 import Dashboard from './components/Dashboard'
 import Footer from './components/Footer'
 import './App.css'
-
+import ReportLostForm from './components/ReportLostForm'
 function App() {
   const [isLoginPage, setIsLoginPage] = useState(window.location.hash === '#login')
 
