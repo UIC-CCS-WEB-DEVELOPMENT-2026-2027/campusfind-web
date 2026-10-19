@@ -25,8 +25,16 @@ During Phase 1 (Web Dev 1), CampusFind is engineered as a responsive Single-Page
 
 * **Frontend Framework:** React.js (Bootstrapped with Vite)
 * **Styling Framework:** Tailwind CSS / CSS3 (Flexbox & Grid Layouts)
-* **Data Layer:** Static sample listings in `src/data/items.json`, with browser-only account sign-in and report CRUD persisted in `localStorage`. Passwords are PBKDF2-hashed in the browser, but this is prototype authentication only; production authentication and database integration are planned for Phase 2. Sample photos are illustrative stock images with visible source credits.
+* **Data Layer:** Static sample listings in `src/data/items.json`, with browser-only account sign-in, report CRUD, conversations, and report outcomes persisted as JSON in `localStorage`. Users can link a Lost report with another account’s Found report, exchange messages in their dashboards, and mark the linked reports Matched, Claimed, or Delisted. Delisted reports stay in their owners’ dashboards but disappear from public listings. These interactions work only in the same browser and are not delivered to other devices or sent as email. Passwords are PBKDF2-hashed in the browser, but this is prototype authentication only; production authentication and database integration are planned for Phase 2. Sample photos are illustrative stock images with visible source credits.
 * **Deployment Pipeline:** Automated CI/CD via Vercel / Netlify linked directly to `main` branch
+
+### Try the browser-only recovery flow
+1. Create an account and publish a **Lost** report.
+2. Sign out, create a second account in the same browser, and publish a **Found** report with a photo.
+3. Browse to the Lost report, choose the Found report you created as the linked report, and send a message.
+4. Switch back to the Lost-report owner to reply in **My dashboard → Conversations**. Both participants can continue the conversation and mark the linked reports **Matched**, **Claimed**, or **Delisted**.
+
+This is a local simulation: account switching works in one browser, but messages and report changes do not sync between devices or reach a real backend.
 
 ---
 

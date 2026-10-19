@@ -3,6 +3,7 @@ import initialItems from '../data/items.json'
 const ITEMS_KEY = 'campusfind.items.v1'
 const ACCOUNTS_KEY = 'campusfind.accounts.v1'
 const SESSION_KEY = 'campusfind.session.v1'
+const CONTACT_REQUESTS_KEY = 'campusfind.contactRequests.v1'
 const PASSWORD_HASH_ITERATIONS = 210_000
 
 function normalizeEmail(email) {
@@ -47,6 +48,53 @@ export function loadItems() {
 
 export function saveItems(items) {
   localStorage.setItem(ITEMS_KEY, JSON.stringify(items))
+}
+
+export function loadContactRequests() {
+  const storedRequests = localStorage.getItem(CONTACT_REQUESTS_KEY)
+  if (storedRequests === null) return []
+
+  const requests = JSON.parse(storedRequests)
+  if (!Array.isArray(requests) || requests.some((request) =>
+    typeof request.id !== 'string' ||
+    typeof request.reportId !== 'string' ||
+    typeof request.reportName !== 'string' ||
+    typeof request.ownerEmail !== 'string' ||
+    typeof request.senderEmail !== 'string' ||
+    typeof request.senderName !== 'string' ||
+    typeof request.intent !== 'string' ||
+    typeof request.message !== 'string' ||
+    typeof request.createdAt !== 'string' ||
+    (request.messages !== undefined && (!Array.isArray(request.messages) || request.messages.some((message) =>
+      typeof message.senderEmail !== 'string' ||
+      typeof message.senderName !== 'string' ||
+      typeof message.message !== 'string' ||
+      typeof message.createdAt !== 'string'
+    )))
+  )) {
+    throw new Error('Saved contact request data is invalid. Clear this site’s CampusFind storage to continue.')
+  }
+
+  return requests.map((request) => ({
+    ...request,
+    relatedReportId: typeof request.relatedReportId === 'string' ? request.relatedReportId : '',
+    relatedReportName: typeof request.relatedReportName === 'string' ? request.relatedReportName : '',
+    relatedReportType: typeof request.relatedReportType === 'string' ? request.relatedReportType : '',
+    relatedOwnerEmail: typeof request.relatedOwnerEmail === 'string' ? request.relatedOwnerEmail : '',
+    status: typeof request.status === 'string' ? request.status : 'Contacting',
+    messages: Array.isArray(request.messages)
+      ? request.messages
+      : [{
+          senderEmail: request.senderEmail,
+          senderName: request.senderName,
+          message: request.message,
+          createdAt: request.createdAt,
+        }],
+  }))
+}
+
+export function saveContactRequests(requests) {
+  localStorage.setItem(CONTACT_REQUESTS_KEY, JSON.stringify(requests))
 }
 
 export function loadAccounts() {

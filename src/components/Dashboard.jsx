@@ -1,18 +1,27 @@
 import { useMemo, useState } from 'react'
 import sampleItems from '../data/items.json'
+import ItemDetails from './ItemDetails'
 import './Dashboard.css'
 
-function Dashboard({ items = sampleItems, currentUserEmail }) {
+function Dashboard({
+  items = sampleItems,
+  currentUserEmail,
+  contactRequests,
+  onSendContactRequest,
+  session,
+}) {
+  const listedItems = items.filter((item) => item.isListed !== false)
   const [query, setQuery] = useState('')
   const [type, setType] = useState('All items')
   const [category, setCategory] = useState('All categories')
   const [location, setLocation] = useState('All locations')
-  const categories = ['All categories', ...new Set(items.map((item) => item.category))]
-  const buildings = ['All locations', ...new Set(items.map((item) => item.location))]
+  const [selectedItem, setSelectedItem] = useState(null)
+  const categories = ['All categories', ...new Set(listedItems.map((item) => item.category))]
+  const buildings = ['All locations', ...new Set(listedItems.map((item) => item.location))]
 
   const filteredItems = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase()
-    return items.filter((item) => {
+    return listedItems.filter((item) => {
       const matchesQuery =
         !normalizedQuery ||
         [item.name, item.category, item.location, item.description]
@@ -25,7 +34,7 @@ function Dashboard({ items = sampleItems, currentUserEmail }) {
         (location === 'All locations' || item.location === location)
       )
     })
-  }, [items, query, type, category, location])
+  }, [listedItems, query, type, category, location])
 
   const clearFilters = () => {
     setQuery('')
@@ -68,7 +77,7 @@ function Dashboard({ items = sampleItems, currentUserEmail }) {
           </div>
           <div className="listing-actions">
             {currentUserEmail && <a className="manage-reports-link" href="#dashboard">Manage my reports</a>}
-            <span className="sample-note">Sample listings</span>
+            <span className="sample-note">Sample + browser reports</span>
           </div>
         </div>
 
@@ -108,7 +117,7 @@ function Dashboard({ items = sampleItems, currentUserEmail }) {
                 aria-pressed={type === value}
               >
                 {value}
-                {value === 'All items' && <span className="tab-count">{items.length}</span>}
+                {value === 'All items' && <span className="tab-count">{listedItems.length}</span>}
               </button>
             ))}
           </div>
@@ -121,43 +130,49 @@ function Dashboard({ items = sampleItems, currentUserEmail }) {
           <div className="item-grid">
             {filteredItems.map((item) => (
               <article className="item-card" key={item.id}>
-                <div className={`item-illustration ${item.color}`}>
-                  <span className="item-image-fallback" aria-hidden="true">{item.icon}</span>
-                  {item.image && (
-                    <img
-                      className="item-image"
-                      src={item.image}
-                      alt={`Photo of ${item.name}`}
-                      loading="lazy"
-                      onError={(event) => {
-                        event.currentTarget.hidden = true
-                        const credit = event.currentTarget.parentElement.querySelector('.photo-credit')
-                        if (credit) credit.hidden = true
-                      }}
-                    />
-                  )}
-                  {item.imageCredit && item.imageSource && (
-                    <a
-                      className="photo-credit"
-                      href={item.imageSource}
-                      target="_blank"
-                      rel="noreferrer"
-                      aria-label={`Photo credit: ${item.imageCredit}`}
-                    >
-                      {item.imageCredit}
-                    </a>
-                  )}
-                  <span className={`status-badge ${item.type.toLowerCase()}`}>{item.type}</span>
-                </div>
-                <div className="item-content">
-                  <div className="item-meta">
-                    <span>{item.category}</span>
-                    <span>{item.date}</span>
+                <button
+                  className="item-card-button"
+                  type="button"
+                  onClick={() => setSelectedItem(item)}
+                  aria-label={`View details for ${item.name}`}
+                >
+                  <div className={`item-illustration ${item.color}`}>
+                    <span className="item-image-fallback" aria-hidden="true">{item.icon}</span>
+                    {item.image && (
+                      <img
+                        className="item-image"
+                        src={item.image}
+                        alt=""
+                        loading="lazy"
+                      />
+                    )}
+                    <span className={`status-badge ${item.type.toLowerCase()}`}>{item.type}</span>
                   </div>
-                  <h3>{item.name}</h3>
-                  <p>{item.description}</p>
-                  <div className="item-location"><span aria-hidden="true">⌖</span>{item.location}</div>
-                </div>
+                  <div className="item-content">
+                    <div className="item-meta">
+                      <span>{item.category}</span>
+                      <span>{item.date}</span>
+                    </div>
+                    <h3>{item.name}</h3>
+                    <p>{item.description}</p>
+                    <div className="item-location"><span aria-hidden="true">⌖</span>{item.location}</div>
+                    {['Matched', 'Claimed'].includes(item.status) && (
+                      <span className={`item-lifecycle-status ${item.status.toLowerCase()}`}>{item.status}</span>
+                    )}
+                    <span className="item-view-details">View details <span aria-hidden="true">→</span></span>
+                  </div>
+                </button>
+                {item.imageCredit && item.imageSource && (
+                  <a
+                    className="photo-credit"
+                    href={item.imageSource}
+                    target="_blank"
+                    rel="noreferrer"
+                    aria-label={`Photo credit: ${item.imageCredit}`}
+                  >
+                    {item.imageCredit}
+                  </a>
+                )}
               </article>
             ))}
           </div>
@@ -170,6 +185,23 @@ function Dashboard({ items = sampleItems, currentUserEmail }) {
           </div>
         )}
       </section>
+
+      {selectedItem && (
+        <ItemDetails
+          item={selectedItem}
+          onClose={() => setSelectedItem(null)}
+          onSendContactRequest={onSendContactRequest}
+          requestSent={contactRequests?.some((request) =>
+            request.reportId === selectedItem.id &&
+            request.senderEmail === currentUserEmail &&
+            ['Contacting', 'Matched'].includes(request.status))}
+          relatedReports={listedItems.filter((report) =>
+            report.ownerEmail === currentUserEmail &&
+            report.type !== selectedItem.type &&
+            !['Claimed', 'Delisted'].includes(report.status))}
+          session={session}
+        />
+      )}
 
       <section className="how-it-works" id="how-it-works" aria-labelledby="how-title">
         <div>

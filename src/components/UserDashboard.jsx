@@ -1,17 +1,108 @@
 import { useState } from 'react'
+import ItemDetails from './ItemDetails'
 import ReportForm from './ReportForm'
 import './UserDashboard.css'
+
+function ConversationCard({ thread, session, onReply, onUpdateOutcome }) {
+  const [message, setMessage] = useState('')
+  const [error, setError] = useState('')
+  const submitReply = (event) => {
+    event.preventDefault()
+    if (onReply(thread.id, message)) {
+      setMessage('')
+      setError('')
+    } else {
+      setError('The message could not be saved. Please try again.')
+    }
+  }
+
+  return (
+    <article className="contact-request-card">
+      <div className="contact-request-heading">
+        <div>
+          <span className={`conversation-status ${thread.status.toLowerCase()}`}>{thread.status}</span>
+          <h3>{thread.reportName}</h3>
+          {thread.relatedReportName && (
+            <p className="linked-report-name">
+              Linked {thread.relatedReportType ?? 'item'} report: {thread.relatedReportName}
+            </p>
+          )}
+        </div>
+        <time dateTime={thread.messages.at(-1)?.createdAt ?? thread.createdAt}>
+          {new Date(thread.messages.at(-1)?.createdAt ?? thread.createdAt).toLocaleString()}
+        </time>
+      </div>
+      <div className="conversation-messages" aria-label="Conversation messages">
+        {thread.messages.map((entry, index) => (
+          <div className={entry.senderEmail === session.email ? 'conversation-message own-message' : 'conversation-message'} key={`${thread.id}-${index}`}>
+            <div className="conversation-message-meta">
+                <div className="conversation-sender">
+                  <strong>{entry.senderName || 'CampusFind user'}</strong>
+                  {entry.senderEmail === session.email && <span className="conversation-you-label">You</span>}
+                  <span className="conversation-sender-email">{entry.senderEmail}</span>
+                </div>
+                <time dateTime={entry.createdAt}>{new Date(entry.createdAt).toLocaleString()}</time>
+            </div>
+            <p>{entry.message}</p>
+          </div>
+        ))}
+      </div>
+      {['Contacting', 'Matched'].includes(thread.status) && (
+        <>
+          <form className="conversation-reply-form" onSubmit={submitReply}>
+            {error && <p className="contact-request-error" role="alert">{error}</p>}
+            <label className="visually-hidden" htmlFor={`reply-${thread.id}`}>Reply to this conversation</label>
+            <textarea
+              id={`reply-${thread.id}`}
+              maxLength={500}
+              onChange={(event) => setMessage(event.target.value)}
+              placeholder="Write a message..."
+              required
+              rows={2}
+              value={message}
+            />
+            <button type="submit">Send reply</button>
+          </form>
+          <div className="conversation-outcomes" aria-label="Update report outcome">
+            <span>When you agree on what happens next:</span>
+            <button type="button" onClick={() => onUpdateOutcome(thread.id, 'Matched')}>Mark matched</button>
+            <button type="button" onClick={() => onUpdateOutcome(thread.id, 'Claimed')}>Mark claimed</button>
+            <button className="delist-action" type="button" onClick={() => onUpdateOutcome(thread.id, 'Delisted')}>Delist linked reports</button>
+          </div>
+        </>
+      )}
+      {thread.status === 'Delisted' && (
+        <div className="conversation-outcomes">
+          <span>These reports are hidden from the public board.</span>
+          <button type="button" onClick={() => onUpdateOutcome(thread.id, 'Matched')}>Relist as matched</button>
+        </div>
+      )}
+    </article>
+  )
+}
 
 function initialsFromName(name) {
   return name.split(/\s+/).slice(0, 2).map((part) => part.charAt(0)).join('').toUpperCase()
 }
 
-function UserDashboard({ items, session, onSaveReport, onDeleteReport }) {
+function UserDashboard({
+  items,
+  session,
+  contactRequests,
+  onSaveReport,
+  onDeleteReport,
+  onToggleReportListing,
+  onReplyToContactRequest,
+  onUpdateContactOutcome,
+}) {
   const [editingReport, setEditingReport] = useState(undefined)
+  const [selectedReport, setSelectedReport] = useState(null)
   const reports = items.filter((item) => item.ownerEmail === session.email)
+  const conversations = contactRequests.filter((request) =>
+    [request.ownerEmail, request.senderEmail, request.relatedOwnerEmail].includes(session.email))
   const reportCounts = {
     total: reports.length,
-    active: reports.filter((report) => !['Resolved', 'Claimed'].includes(report.status)).length,
+    active: reports.filter((report) => !['Resolved', 'Claimed', 'Delisted'].includes(report.status)).length,
     matched: reports.filter((report) => report.status === 'Matched').length,
   }
 
@@ -64,6 +155,33 @@ function UserDashboard({ items, session, onSaveReport, onDeleteReport }) {
         </div>
       </section>
 
+      <section className="reports-section contact-requests-section" aria-labelledby="contact-requests-title">
+        <div className="reports-heading">
+          <div>
+            <span className="eyebrow">MESSAGES</span>
+            <h2 id="contact-requests-title">Conversations</h2>
+            <p>Contact each other, compare reports, then agree on the item’s outcome.</p>
+          </div>
+          <span className="requests-count">{conversations.length} {conversations.length === 1 ? 'conversation' : 'conversations'}</span>
+        </div>
+        {conversations.length > 0 ? (
+          <div className="contact-requests-list">
+            {conversations.map((thread) => (
+              <ConversationCard
+                key={thread.id}
+                onReply={onReplyToContactRequest}
+                onUpdateOutcome={onUpdateContactOutcome}
+                session={session}
+                thread={thread}
+              />
+            ))}
+          </div>
+        ) : (
+          <p className="contact-requests-empty">No conversations yet. Open a report to contact its owner.</p>
+        )}
+        <p className="data-disclaimer">Conversations and outcomes are stored only in this browser and are not shared with other devices.</p>
+      </section>
+
       <section className="reports-section" aria-labelledby="reports-title">
         <div className="reports-heading">
           <div>
@@ -85,7 +203,14 @@ function UserDashboard({ items, session, onSaveReport, onDeleteReport }) {
                 </div>
                 <div className="report-main">
                   <div className="report-title-line">
-                    <h3>{report.name}</h3>
+                    <button
+                      className="report-details-trigger"
+                      type="button"
+                      onClick={() => setSelectedReport(report)}
+                      aria-label={`View details for ${report.name}`}
+                    >
+                      {report.name}
+                    </button>
                     <span className={`report-type-label ${report.type.toLowerCase()}`}>{report.type}</span>
                   </div>
                   <p>{report.location} <span aria-hidden="true">·</span> {report.date}</p>
@@ -97,6 +222,13 @@ function UserDashboard({ items, session, onSaveReport, onDeleteReport }) {
                   </span>
                   <div className="report-actions">
                     <button type="button" onClick={() => setEditingReport(report)}>Edit</button>
+                    <button
+                      className={report.isListed === false ? '' : 'delist-report-action'}
+                      type="button"
+                      onClick={() => onToggleReportListing(report.id, report.isListed === false)}
+                    >
+                      {report.isListed === false ? 'Relist' : 'Delist'}
+                    </button>
                     <button className="delete-report-button" type="button" onClick={() => deleteReport(report)}>Delete</button>
                   </div>
                 </div>
@@ -112,7 +244,7 @@ function UserDashboard({ items, session, onSaveReport, onDeleteReport }) {
           </div>
         )}
         <p className="data-disclaimer">
-          Prototype only: authentication is stored in this browser and is not secure production sign-in. Reports are saved here and visible on the public campus board.
+          Prototype only: authentication and reports are stored in this browser and are not secure production services.
         </p>
       </section>
       {editingReport !== undefined && (
@@ -120,6 +252,15 @@ function UserDashboard({ items, session, onSaveReport, onDeleteReport }) {
           report={editingReport}
           onCancel={() => setEditingReport(undefined)}
           onSave={saveReport}
+        />
+      )}
+      {selectedReport && (
+        <ItemDetails
+          item={selectedReport}
+          onClose={() => setSelectedReport(null)}
+          requestSent={conversations.some((request) =>
+            request.reportId === selectedReport.id && request.senderEmail === session.email)}
+          session={session}
         />
       )}
     </div>

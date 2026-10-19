@@ -85,6 +85,7 @@ function ReportForm({ report, onSave, onCancel }) {
       icon: report?.icon ?? (type === 'Found' ? '📦' : '🔎'),
       color: report?.color ?? 'lavender',
       status: report?.status ?? 'In review',
+      isListed: report?.isListed ?? true,
       imageCredit: image.startsWith('data:') ? '' : report?.imageCredit ?? '',
       imageSource: image.startsWith('data:') ? '' : report?.imageSource ?? '',
     })

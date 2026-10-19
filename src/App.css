@@ -8,6 +8,22 @@
   flex: 1;
 }
 
+.route-transition {
+  animation: route-enter 220ms ease-out both;
+}
+
+@keyframes route-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .login-page {
   min-height: 100%;
   padding: 56px 20px;
@@ -24,4 +40,10 @@
   background: #fff3f1;
   font-size: 12px;
   line-height: 1.5;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .route-transition {
+    animation: none;
+  }
 }
