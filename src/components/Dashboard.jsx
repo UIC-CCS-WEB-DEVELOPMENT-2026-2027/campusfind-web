@@ -3,6 +3,8 @@ import sampleItems from '../data/items.json'
 import ItemDetails from './ItemDetails'
 import './Dashboard.css'
 
+const ITEMS_PER_PAGE = 6
+
 function Dashboard({
   items = sampleItems,
   currentUserEmail,
@@ -15,6 +17,7 @@ function Dashboard({
   const [type, setType] = useState('All items')
   const [category, setCategory] = useState('All categories')
   const [location, setLocation] = useState('All locations')
+  const [page, setPage] = useState(1)
   const [selectedItem, setSelectedItem] = useState(null)
   const categories = ['All categories', ...new Set(listedItems.map((item) => item.category))]
   const buildings = ['All locations', ...new Set(listedItems.map((item) => item.location))]
@@ -36,11 +39,24 @@ function Dashboard({
     })
   }, [listedItems, query, type, category, location])
 
+  const pageCount = Math.ceil(filteredItems.length / ITEMS_PER_PAGE)
+  const currentPage = Math.min(page, Math.max(pageCount, 1))
+  const pageItems = filteredItems.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE,
+  )
+  const firstPageNumber = Math.max(1, Math.min(currentPage - 2, pageCount - 4))
+  const visiblePageNumbers = Array.from(
+    { length: Math.min(pageCount, 5) },
+    (_, index) => firstPageNumber + index,
+  )
+
   const clearFilters = () => {
     setQuery('')
     setType('All items')
     setCategory('All categories')
     setLocation('All locations')
+    setPage(1)
   }
 
   return (
@@ -56,8 +72,6 @@ function Dashboard({
           <a className="hero-link" href="#items">Explore recent items <span aria-hidden="true">↓</span></a>
         </div>
         <div className="hero-art" aria-hidden="true">
-          <span className="art-spark spark-one">✦</span>
-          <span className="art-spark spark-two">✧</span>
           <div className="art-card art-card-back"><span>FOUND</span><b>Keys</b></div>
           <div className="art-card art-card-front">
             <span className="art-card-icon">🔎</span>
@@ -89,18 +103,27 @@ function Dashboard({
               type="search"
               placeholder="Search by item, place, or keyword..."
               value={query}
-              onChange={(event) => setQuery(event.target.value)}
+              onChange={(event) => {
+                setQuery(event.target.value)
+                setPage(1)
+              }}
             />
           </label>
           <label className="select-field">
             <span className="visually-hidden">Filter by category</span>
-            <select value={category} onChange={(event) => setCategory(event.target.value)}>
+            <select value={category} onChange={(event) => {
+              setCategory(event.target.value)
+              setPage(1)
+            }}>
               {categories.map((value) => <option key={value}>{value}</option>)}
             </select>
           </label>
           <label className="select-field">
             <span className="visually-hidden">Filter by location</span>
-            <select value={location} onChange={(event) => setLocation(event.target.value)}>
+            <select value={location} onChange={(event) => {
+              setLocation(event.target.value)
+              setPage(1)
+            }}>
               {buildings.map((value) => <option key={value}>{value}</option>)}
             </select>
           </label>
@@ -112,7 +135,10 @@ function Dashboard({
               <button
                 className={type === value ? 'item-tab active' : 'item-tab'}
                 key={value}
-                onClick={() => setType(value)}
+                onClick={() => {
+                  setType(value)
+                  setPage(1)
+                }}
                 type="button"
                 aria-pressed={type === value}
               >
@@ -128,7 +154,7 @@ function Dashboard({
 
         {filteredItems.length > 0 ? (
           <div className="item-grid">
-            {filteredItems.map((item) => (
+            {pageItems.map((item) => (
               <article className="item-card" key={item.id}>
                 <button
                   className="item-card-button"
@@ -183,6 +209,59 @@ function Dashboard({
             <p>Try a different keyword or clear your filters to see all reports.</p>
             <button className="clear-button" type="button" onClick={clearFilters}>Clear filters</button>
           </div>
+        )}
+        {pageCount > 1 && (
+          <nav className="items-pagination" aria-label="Item listing pages">
+            <span className="pagination-summary">
+              Showing {(currentPage - 1) * ITEMS_PER_PAGE + 1}–{Math.min(currentPage * ITEMS_PER_PAGE, filteredItems.length)} of {filteredItems.length}
+            </span>
+            <div className="pagination-controls">
+              <button
+                className="pagination-arrow"
+                type="button"
+                disabled={currentPage === 1}
+                onClick={() => setPage(currentPage - 1)}
+              >
+                Previous
+              </button>
+              {firstPageNumber > 1 && (
+                <>
+                  <button type="button" onClick={() => setPage(1)} aria-label="Go to page 1">1</button>
+                  {firstPageNumber > 2 && <span className="pagination-ellipsis" aria-hidden="true">…</span>}
+                </>
+              )}
+              {visiblePageNumbers.map((pageNumber) => (
+                <button
+                  aria-current={currentPage === pageNumber ? 'page' : undefined}
+                  aria-label={`Go to page ${pageNumber}`}
+                  className={currentPage === pageNumber ? 'active' : ''}
+                  key={pageNumber}
+                  onClick={() => setPage(pageNumber)}
+                  type="button"
+                >
+                  {pageNumber}
+                </button>
+              ))}
+              {firstPageNumber + visiblePageNumbers.length - 1 < pageCount && (
+                <>
+                  {firstPageNumber + visiblePageNumbers.length < pageCount && (
+                    <span className="pagination-ellipsis" aria-hidden="true">…</span>
+                  )}
+                  <button type="button" onClick={() => setPage(pageCount)} aria-label={`Go to page ${pageCount}`}>
+                    {pageCount}
+                  </button>
+                </>
+              )}
+              <button
+                className="pagination-arrow"
+                type="button"
+                disabled={currentPage === pageCount}
+                onClick={() => setPage(currentPage + 1)}
+              >
+                Next
+              </button>
+            </div>
+          </nav>
         )}
       </section>
 

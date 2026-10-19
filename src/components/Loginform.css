@@ -148,6 +148,24 @@
   color: #505bc5;
 }
 
+.login-card {
+  border-color: #d5dcf0;
+  background: linear-gradient(150deg, #fff 0%, #fbfbff 66%, #f1f8f4 100%);
+  box-shadow: 0 22px 55px rgba(50, 62, 109, 0.16);
+}
+
+.login-submit {
+  background: linear-gradient(100deg, #5967ce, #7069d4);
+  box-shadow: 0 5px 12px rgba(84, 97, 197, 0.2);
+  transition: transform 150ms ease, box-shadow 150ms ease, background 150ms ease;
+}
+
+.login-submit:hover {
+  transform: translateY(-1px);
+  background: linear-gradient(100deg, #4e5cbe, #635dc7);
+  box-shadow: 0 7px 16px rgba(84, 97, 197, 0.26);
+}
+
 @media (max-width: 480px) {
   .login-card {
     padding: 26px 21px;

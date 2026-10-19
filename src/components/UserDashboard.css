@@ -731,6 +731,76 @@
   line-height: 1.6;
 }
 
+.user-dashboard {
+  background:
+    radial-gradient(ellipse at 10% 4%, rgba(224, 230, 255, 0.7), transparent 30rem),
+    linear-gradient(180deg, #f1f4fb 0%, #f6f7fb 35%, #eef5f2 100%);
+}
+
+.user-dashboard-header {
+  position: relative;
+  padding: 21px 24px;
+  border: 1px solid #d8def0;
+  border-radius: 15px;
+  background: linear-gradient(115deg, #e8edff 0%, #f1efff 52%, #e7f5ef 100%);
+  box-shadow: 0 8px 22px rgba(46, 60, 104, 0.06);
+}
+
+.profile-card,
+.summary-card,
+.reports-section {
+  border-color: #d9e0ed;
+  box-shadow: 0 7px 22px rgba(44, 58, 99, 0.055);
+}
+
+.profile-card {
+  border-color: #cfd7ee;
+  background: linear-gradient(140deg, #fff 0%, #f3f4ff 100%);
+}
+
+.summary-card:nth-child(1) {
+  border-color: #d5d9f4;
+  background: linear-gradient(145deg, #fff 0%, #f0f1ff 100%);
+}
+
+.summary-card:nth-child(2) {
+  border-color: #f0dfc8;
+  background: linear-gradient(145deg, #fff 0%, #fff7eb 100%);
+}
+
+.summary-card:nth-child(3) {
+  border-color: #d0e8da;
+  background: linear-gradient(145deg, #fff 0%, #eff9f2 100%);
+}
+
+.reports-section {
+  background: linear-gradient(145deg, #fff 0%, #fbfcff 100%);
+}
+
+.contact-requests-section {
+  border-color: #cfd7f1;
+  background: linear-gradient(145deg, #fff 0%, #f2f3ff 100%);
+}
+
+.contact-request-card {
+  border-color: #d9def2;
+  background: linear-gradient(135deg, #fff 0%, #f8f8ff 100%);
+}
+
+.conversation-message {
+  border-color: #dde2ef;
+  box-shadow: 0 3px 8px rgba(45, 60, 104, 0.035);
+}
+
+.conversation-message.own-message {
+  border-color: #cdd2f5;
+  background: linear-gradient(140deg, #f0f1ff, #f6f4ff);
+}
+
+.report-row {
+  border-bottom-color: #e1e6f0;
+}
+
 .visually-hidden {
   position: absolute;
   width: 1px;

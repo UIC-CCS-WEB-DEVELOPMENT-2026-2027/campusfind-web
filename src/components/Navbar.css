@@ -88,6 +88,54 @@
   font-family: inherit;
 }
 
+.site-header {
+  position: sticky;
+  top: 0;
+  border-bottom-color: #dce2f0;
+  background: rgba(250, 251, 255, 0.94);
+  box-shadow: 0 4px 18px rgba(47, 61, 105, 0.06);
+  backdrop-filter: blur(14px);
+}
+
+.brand-mark {
+  background: linear-gradient(145deg, #737de0, #5964c4);
+  box-shadow: 0 4px 10px rgba(82, 96, 194, 0.22);
+}
+
+.primary-nav a {
+  position: relative;
+}
+
+.primary-nav a::after {
+  position: absolute;
+  right: 0;
+  bottom: -8px;
+  left: 0;
+  height: 2px;
+  border-radius: 2px;
+  background: #6874d7;
+  content: "";
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 160ms ease;
+}
+
+.primary-nav a:hover::after,
+.primary-nav a:focus-visible::after {
+  transform: scaleX(1);
+}
+
+.sign-in-link:not(.sign-out-button) {
+  border-color: #cbd2f4;
+  color: #4d59b6;
+  background: #f1f2ff;
+}
+
+.sign-in-link:not(.sign-out-button):hover {
+  border-color: #aeb8ef;
+  background: #e7eaff;
+}
+
 @media (max-width: 620px) {
   .site-header {
     min-height: 64px;

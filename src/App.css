@@ -30,7 +30,9 @@
   display: grid;
   place-items: center;
   box-sizing: border-box;
-  background: linear-gradient(135deg, #eaf3ff 0%, #f5edff 100%);
+  background:
+    radial-gradient(ellipse at 15% 20%, rgba(255, 222, 192, 0.48), transparent 28rem),
+    linear-gradient(135deg, #e5edff 0%, #f0ebff 54%, #e4f5f0 100%);
 }
 
 .app-storage-error {
