@@ -16,3 +16,12 @@
   box-sizing: border-box;
   background: linear-gradient(135deg, #eaf3ff 0%, #f5edff 100%);
 }
+
+.app-storage-error {
+  padding: 10px max(5vw, 22px);
+  border-bottom: 1px solid #f0c9c5;
+  color: #8a3730;
+  background: #fff3f1;
+  font-size: 12px;
+  line-height: 1.5;
+}

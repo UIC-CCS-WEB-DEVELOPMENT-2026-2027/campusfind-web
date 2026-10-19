@@ -206,6 +206,24 @@
   white-space: nowrap;
 }
 
+.listing-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.manage-reports-link {
+  color: #545fc6;
+  font-size: 11px;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.manage-reports-link:hover {
+  text-decoration: underline;
+}
+
 .search-panel {
   display: grid;
   grid-template-columns: minmax(180px, 1fr) minmax(150px, 210px) minmax(150px, 210px);
@@ -586,6 +604,10 @@
     align-items: start;
     flex-direction: column;
     gap: 12px;
+  }
+
+  .listing-actions {
+    flex-wrap: wrap;
   }
 
   .search-panel {

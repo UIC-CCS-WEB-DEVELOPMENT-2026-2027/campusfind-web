@@ -25,7 +25,7 @@ During Phase 1 (Web Dev 1), CampusFind is engineered as a responsive Single-Page
 
 * **Frontend Framework:** React.js (Bootstrapped with Vite)
 * **Styling Framework:** Tailwind CSS / CSS3 (Flexbox & Grid Layouts)
-* **Data Layer:** Static sample listings in `src/data/items.json`, imported by the dashboard and filtered with React state. Sample photos are illustrative stock images with visible source credits; user-submitted photos and backend/database integration are planned for Phase 2.
+* **Data Layer:** Static sample listings in `src/data/items.json`, with browser-only account sign-in and report CRUD persisted in `localStorage`. Passwords are PBKDF2-hashed in the browser, but this is prototype authentication only; production authentication and database integration are planned for Phase 2. Sample photos are illustrative stock images with visible source credits.
 * **Deployment Pipeline:** Automated CI/CD via Vercel / Netlify linked directly to `main` branch
 
 ---

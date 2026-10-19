@@ -1,0 +1,179 @@
+.report-modal-backdrop {
+  position: fixed;
+  z-index: 10;
+  inset: 0;
+  display: grid;
+  overflow-y: auto;
+  padding: 24px 14px;
+  place-items: center;
+  background: rgba(25, 36, 56, 0.48);
+}
+
+.report-modal {
+  width: min(100%, 560px);
+  max-height: calc(100vh - 48px);
+  overflow-y: auto;
+  padding: 25px;
+  border: 1px solid #e6eaf1;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 24px 70px rgba(22, 32, 53, 0.24);
+}
+
+.report-modal-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 15px;
+  margin-bottom: 17px;
+}
+
+.report-modal-heading h2 {
+  margin: 7px 0 0;
+  color: #26344a;
+  font-size: 24px;
+  letter-spacing: -0.8px;
+}
+
+.modal-close {
+  width: 33px;
+  height: 33px;
+  border: 1px solid #e4e8ef;
+  border-radius: 8px;
+  color: #6e798a;
+  background: #fff;
+  cursor: pointer;
+  font-size: 21px;
+  line-height: 1;
+}
+
+.report-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 13px;
+}
+
+.report-form > label {
+  display: grid;
+  align-content: start;
+  gap: 6px;
+  color: #46536a;
+  font-size: 11px;
+  font-weight: 650;
+}
+
+.report-form input,
+.report-form select,
+.report-form textarea {
+  width: 100%;
+  min-height: 40px;
+  padding: 9px 10px;
+  border: 1px solid #dfe4ed;
+  border-radius: 7px;
+  color: #344158;
+  background: #fff;
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.report-form textarea {
+  resize: vertical;
+}
+
+.report-description-field,
+.report-photo-field,
+.report-photo-preview,
+.report-form-actions {
+  grid-column: 1 / -1;
+}
+
+.report-photo-field input[type="file"] {
+  min-height: auto;
+  padding: 8px;
+  background: #fafbfc;
+}
+
+.photo-help {
+  color: #8791a2;
+  font-size: 10px;
+  font-weight: 400;
+}
+
+.report-photo-preview {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.report-photo-preview img {
+  width: 94px;
+  height: 70px;
+  border-radius: 7px;
+  object-fit: cover;
+}
+
+.report-photo-preview button {
+  padding: 7px 9px;
+  border: 1px solid #e6d6d4;
+  border-radius: 6px;
+  color: #965148;
+  background: #fff;
+  cursor: pointer;
+  font-size: 10px;
+}
+
+.report-form-error {
+  margin: 0 0 14px;
+  padding: 9px 11px;
+  border: 1px solid #f0c9c5;
+  border-radius: 7px;
+  color: #8a3730;
+  background: #fff3f1;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.report-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 9px;
+  padding-top: 4px;
+}
+
+.report-form-actions button {
+  min-height: 38px;
+  padding: 0 13px;
+  border-radius: 7px;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.cancel-report-button {
+  border: 1px solid #e0e5ed;
+  color: #5e6a7e;
+  background: #fff;
+}
+
+.save-report-button {
+  border: 1px solid #5964d8;
+  color: #fff;
+  background: #5964d8;
+}
+
+@media (max-width: 480px) {
+  .report-modal {
+    padding: 19px 16px;
+  }
+
+  .report-form {
+    grid-template-columns: 1fr;
+  }
+
+  .report-description-field,
+  .report-photo-field,
+  .report-photo-preview,
+  .report-form-actions {
+    grid-column: auto;
+  }
+}
