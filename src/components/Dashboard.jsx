@@ -1,3 +1,4 @@
+
 import ReportLostForm from './ReportLostForm'
 import { useMemo, useState } from 'react'
 import sampleItems from '../data/items.json'
@@ -11,6 +12,7 @@ function Dashboard() {
   const [type, setType] = useState('All items')
   const [category, setCategory] = useState('All categories')
   const [location, setLocation] = useState('All locations')
+  const [showReportForm, setShowReportForm] = useState(false)
 
   const filteredItems = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase()
@@ -40,18 +42,25 @@ function Dashboard() {
     <div className="dashboard">
       <section className="dashboard-hero" id="home">
         <div className="hero-copy">
-          <span className="eyebrow"><span className="eyebrow-dot" /> CAMPUS LOST &amp; FOUND</span>
+          <span className="eyebrow">
+            <span className="eyebrow-dot" /> CAMPUS LOST &amp; FOUND
+          </span>
           <h1>Lost something?<br /><span>Let’s find it.</span></h1>
           <p>
             One campus, one place to reconnect people with the things they’ve lost.
             Search recent reports or browse by item type.
           </p>
-          <a className="hero-link" href="#items">Explore recent items <span aria-hidden="true">↓</span></a>
+          <a className="hero-link" href="#items">
+            Explore recent items <span aria-hidden="true">↓</span>
+          </a>
         </div>
+
         <div className="hero-art" aria-hidden="true">
           <span className="art-spark spark-one">✦</span>
           <span className="art-spark spark-two">✧</span>
-          <div className="art-card art-card-back"><span>FOUND</span><b>Keys</b></div>
+          <div className="art-card art-card-back">
+            <span>FOUND</span><b>Keys</b>
+          </div>
           <div className="art-card art-card-front">
             <span className="art-card-icon">🔎</span>
             <span className="art-card-label">A little help goes a long way</span>
@@ -68,8 +77,24 @@ function Dashboard() {
             <h2 id="browse-title">Recently reported</h2>
             <p>Browse the latest lost and found reports from around campus.</p>
           </div>
-          <span className="sample-note">Sample listings</span>
+
+          <div>
+            <span className="sample-note">Sample listings</span>
+            {' '}
+            <button
+              type="button"
+              onClick={() => setShowReportForm(!showReportForm)}
+            >
+              {showReportForm ? 'Close Form' : '+ Report Lost Item'}
+            </button>
+          </div>
         </div>
+
+        {showReportForm && (
+          <div>
+            <ReportLostForm />
+          </div>
+        )}
 
         <div className="search-panel">
           <label className="search-field">
@@ -82,16 +107,28 @@ function Dashboard() {
               onChange={(event) => setQuery(event.target.value)}
             />
           </label>
+
           <label className="select-field">
             <span className="visually-hidden">Filter by category</span>
-            <select value={category} onChange={(event) => setCategory(event.target.value)}>
-              {categories.map((value) => <option key={value}>{value}</option>)}
+            <select
+              value={category}
+              onChange={(event) => setCategory(event.target.value)}
+            >
+              {categories.map((value) => (
+                <option key={value}>{value}</option>
+              ))}
             </select>
           </label>
+
           <label className="select-field">
             <span className="visually-hidden">Filter by location</span>
-            <select value={location} onChange={(event) => setLocation(event.target.value)}>
-              {buildings.map((value) => <option key={value}>{value}</option>)}
+            <select
+              value={location}
+              onChange={(event) => setLocation(event.target.value)}
+            >
+              {buildings.map((value) => (
+                <option key={value}>{value}</option>
+              ))}
             </select>
           </label>
         </div>
@@ -107,10 +144,13 @@ function Dashboard() {
                 aria-pressed={type === value}
               >
                 {value}
-                {value === 'All items' && <span className="tab-count">{sampleItems.length}</span>}
+                {value === 'All items' && (
+                  <span className="tab-count">{sampleItems.length}</span>
+                )}
               </button>
             ))}
           </div>
+
           <span className="results-count" aria-live="polite">
             {filteredItems.length} {filteredItems.length === 1 ? 'item' : 'items'}
           </span>
@@ -121,7 +161,9 @@ function Dashboard() {
             {filteredItems.map((item) => (
               <article className="item-card" key={item.id}>
                 <div className={`item-illustration ${item.color}`}>
-                  <span className="item-image-fallback" aria-hidden="true">{item.icon}</span>
+                  <span className="item-image-fallback" aria-hidden="true">
+                    {item.icon}
+                  </span>
                   <img
                     className="item-image"
                     src={item.image}
@@ -142,8 +184,11 @@ function Dashboard() {
                   >
                     {item.imageCredit}
                   </a>
-                  <span className={`status-badge ${item.type.toLowerCase()}`}>{item.type}</span>
+                  <span className={`status-badge ${item.type.toLowerCase()}`}>
+                    {item.type}
+                  </span>
                 </div>
+
                 <div className="item-content">
                   <div className="item-meta">
                     <span>{item.category}</span>
@@ -151,7 +196,9 @@ function Dashboard() {
                   </div>
                   <h3>{item.name}</h3>
                   <p>{item.description}</p>
-                  <div className="item-location"><span aria-hidden="true">⌖</span>{item.location}</div>
+                  <div className="item-location">
+                    <span aria-hidden="true">⌖</span>{item.location}
+                  </div>
                 </div>
               </article>
             ))}
@@ -161,7 +208,9 @@ function Dashboard() {
             <span aria-hidden="true">⌕</span>
             <h3>No matching items</h3>
             <p>Try a different keyword or clear your filters to see all reports.</p>
-            <button className="clear-button" type="button" onClick={clearFilters}>Clear filters</button>
+            <button className="clear-button" type="button" onClick={clearFilters}>
+              Clear filters
+            </button>
           </div>
         )}
       </section>
@@ -171,6 +220,7 @@ function Dashboard() {
           <span className="eyebrow">A COMMUNITY EFFORT</span>
           <h2 id="how-title">Small steps. Happy reunions.</h2>
         </div>
+
         <div className="steps-grid">
           <article className="step-card">
             <span className="step-number">01</span>
