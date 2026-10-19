@@ -1,12 +1,15 @@
 [
   {
     "id": 1,
-    "name": "Black wireless headphones",
+    "name": "Wireless headphones",
     "type": "Found",
     "category": "Electronics",
     "location": "Library, 2nd floor",
     "date": "Today",
     "icon": "🎧",
+    "image": "https://images.pexels.com/photos/3394665/pexels-photo-3394665.jpeg?auto=compress&cs=tinysrgb&w=800",
+    "imageCredit": "Pexels",
+    "imageSource": "https://www.pexels.com/search/headphones/",
     "color": "lavender",
     "description": "Found near the study tables by the east windows."
   },
@@ -18,6 +21,9 @@
     "location": "Student Center",
     "date": "Today",
     "icon": "🪪",
+    "image": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/ff/Student_OMNY_Card.jpg/960px-Student_OMNY_Card.jpg",
+    "imageCredit": "Marc A. Hermann / MTA · CC BY 2.0",
+    "imageSource": "https://commons.wikimedia.org/wiki/File:Student_OMNY_Card.jpg",
     "color": "blue",
     "description": "Picked up at the main entrance. Name is withheld for verification."
   },
@@ -29,6 +35,9 @@
     "location": "Science Building",
     "date": "Yesterday",
     "icon": "🥤",
+    "image": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/08/Stainless_Steel_Water_Bottle.jpg/960px-Stainless_Steel_Water_Bottle.jpg",
+    "imageCredit": "Gannu03 · CC BY-SA 4.0",
+    "imageSource": "https://commons.wikimedia.org/wiki/File:Stainless_Steel_Water_Bottle.jpg",
     "color": "mint",
     "description": "Silver bottle with a few small stickers on the side."
   },
@@ -40,6 +49,9 @@
     "location": "Arts Building",
     "date": "Yesterday",
     "icon": "☂️",
+    "image": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/22/Folding_umbrella_01.jpg/960px-Folding_umbrella_01.jpg",
+    "imageCredit": "Kritzolina · CC BY-SA 4.0",
+    "imageSource": "https://commons.wikimedia.org/wiki/File:Folding_umbrella_01.jpg",
     "color": "peach",
     "description": "Left outside room 204 after the afternoon lecture."
   },
@@ -51,6 +63,9 @@
     "location": "Engineering Hall",
     "date": "Oct 16",
     "icon": "📓",
+    "image": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/65/Green_Soft-Covered_Composition_Notebook_%2814822730560%29.jpg/960px-Green_Soft-Covered_Composition_Notebook_%2814822730560%29.jpg",
+    "imageCredit": "slgckgc · CC BY 2.0",
+    "imageSource": "https://commons.wikimedia.org/wiki/File:Green_Soft-Covered_Composition_Notebook_(14822730560).jpg",
     "color": "mint",
     "description": "A5 notebook with class notes inside. Last seen in room 301."
   },
@@ -62,6 +77,9 @@
     "location": "Campus Cafeteria",
     "date": "Oct 15",
     "icon": "🔑",
+    "image": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/1f/Car_keys_with_keychain.jpg/960px-Car_keys_with_keychain.jpg",
+    "imageCredit": "MediaPhoto.Org · CC BY 3.0",
+    "imageSource": "https://commons.wikimedia.org/wiki/File:Car_keys_with_keychain.jpg",
     "color": "lavender",
     "description": "Handed in at the cafeteria counter."
   }
