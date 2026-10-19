@@ -1,10 +1,12 @@
+
 import { useEffect, useState } from 'react'
 import Navbar from './components/Navbar'
 import LoginForm from './components/Loginform'
 import Dashboard from './components/Dashboard'
 import Footer from './components/Footer'
-import './App.css'
 import ReportLostForm from './components/ReportLostForm'
+import './App.css'
+
 function App() {
   const [isLoginPage, setIsLoginPage] = useState(window.location.hash === '#login')
 
