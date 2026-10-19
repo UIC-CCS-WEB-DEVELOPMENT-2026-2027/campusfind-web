@@ -1,0 +1,68 @@
+[
+  {
+    "id": 1,
+    "name": "Black wireless headphones",
+    "type": "Found",
+    "category": "Electronics",
+    "location": "Library, 2nd floor",
+    "date": "Today",
+    "icon": "🎧",
+    "color": "lavender",
+    "description": "Found near the study tables by the east windows."
+  },
+  {
+    "id": 2,
+    "name": "Blue student ID card",
+    "type": "Found",
+    "category": "Personal items",
+    "location": "Student Center",
+    "date": "Today",
+    "icon": "🪪",
+    "color": "blue",
+    "description": "Picked up at the main entrance. Name is withheld for verification."
+  },
+  {
+    "id": 3,
+    "name": "Stainless steel water bottle",
+    "type": "Lost",
+    "category": "Personal items",
+    "location": "Science Building",
+    "date": "Yesterday",
+    "icon": "🥤",
+    "color": "mint",
+    "description": "Silver bottle with a few small stickers on the side."
+  },
+  {
+    "id": 4,
+    "name": "Black umbrella",
+    "type": "Found",
+    "category": "Accessories",
+    "location": "Arts Building",
+    "date": "Yesterday",
+    "icon": "☂️",
+    "color": "peach",
+    "description": "Left outside room 204 after the afternoon lecture."
+  },
+  {
+    "id": 5,
+    "name": "Notebook with a green cover",
+    "type": "Lost",
+    "category": "School supplies",
+    "location": "Engineering Hall",
+    "date": "Oct 16",
+    "icon": "📓",
+    "color": "mint",
+    "description": "A5 notebook with class notes inside. Last seen in room 301."
+  },
+  {
+    "id": 6,
+    "name": "Set of keys with a red tag",
+    "type": "Found",
+    "category": "Personal items",
+    "location": "Campus Cafeteria",
+    "date": "Oct 15",
+    "icon": "🔑",
+    "color": "lavender",
+    "description": "Handed in at the cafeteria counter."
+  }
+]
