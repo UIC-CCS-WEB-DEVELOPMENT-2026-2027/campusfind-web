@@ -9,7 +9,7 @@
 ---
 
 ## 📌 Project Overview
-**CampusFind** is an enterprise web application designed to centralize lost-and-found reporting across university buildings and departments. Students, faculty, and campus security staff often struggle with fragmented reporting across Facebook groups, group chats, or physical desks. CampusFind provides a unified, real-time searchable platform for logging lost/found items, verifying ownership claims, and tracking item statuses from report to retrieval.
+**CampusFind** is a responsive lost-and-found prototype for campus communities. It provides searchable sample listings, browser-local reporting and conversations, and a simulated item recovery flow. Production authentication, shared data, and real-time notifications are outside the scope of Phase 1.
 
 ---
 
@@ -35,6 +35,8 @@ During Phase 1 (Web Dev 1), CampusFind is engineered as a responsive Single-Page
 4. Switch back to the Lost-report owner to reply in **My dashboard → Conversations**. Both participants can continue the conversation and mark the linked reports **Matched**, **Claimed**, or **Delisted**.
 
 This is a local simulation: account switching works in one browser, but messages and report changes do not sync between devices or reach a real backend.
+
+Use the **Report lost item** and **Report found item** actions on the home page or the matching actions in **My dashboard** to create reports. Signed-out users are asked to sign in first, and then continue with the selected report type. The public board can be sorted by report date and filtered to show reports that are still active. The dashboard includes explanations for report statuses.
 
 ---
 

@@ -62,6 +62,13 @@
   font-weight: 650;
 }
 
+.field-help {
+  color: #7b879a;
+  font-size: 10px;
+  font-weight: 400;
+  line-height: 1.45;
+}
+
 .report-form input,
 .report-form select,
 .report-form textarea {
@@ -131,6 +138,10 @@
   background: #fff3f1;
   font-size: 11px;
   line-height: 1.5;
+}
+
+.report-modal:focus {
+  outline: none;
 }
 
 .report-form-actions {

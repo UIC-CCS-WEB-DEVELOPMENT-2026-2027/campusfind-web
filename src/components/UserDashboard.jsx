@@ -94,9 +94,12 @@ function UserDashboard({
   onToggleReportListing,
   onReplyToContactRequest,
   onUpdateContactOutcome,
+  requestedReportType,
+  onReportRequestHandled,
 }) {
-  const [editingReport, setEditingReport] = useState(undefined)
+  const [editingReport, setEditingReport] = useState(() => requestedReportType ? null : undefined)
   const [selectedReport, setSelectedReport] = useState(null)
+  const [reportSaveMessage, setReportSaveMessage] = useState('')
   const reports = items.filter((item) => item.ownerEmail === session.email)
   const conversations = contactRequests.filter((request) =>
     [request.ownerEmail, request.senderEmail, request.relatedOwnerEmail].includes(session.email))
@@ -107,7 +110,18 @@ function UserDashboard({
   }
 
   const saveReport = (report) => {
-    if (onSaveReport(report)) setEditingReport(undefined)
+    if (onSaveReport(report)) {
+      setEditingReport(undefined)
+      onReportRequestHandled()
+      setReportSaveMessage(report.id
+        ? 'Your report changes were saved.'
+        : 'Your report has been saved and added to the campus listings.')
+    }
+  }
+
+  const cancelReport = () => {
+    setEditingReport(undefined)
+    onReportRequestHandled()
   }
 
   const deleteReport = (report) => {
@@ -155,6 +169,18 @@ function UserDashboard({
         </div>
       </section>
 
+      <div className="status-guide">
+        <details>
+          <summary>What do report statuses mean?</summary>
+          <dl>
+            <div><dt>In review</dt><dd>Visible on the board and waiting for someone to contact you.</dd></div>
+            <div><dt>Matched</dt><dd>You believe this report is connected to another report; coordinate the return in Conversations.</dd></div>
+            <div><dt>Claimed</dt><dd>The item has been marked as returned to its owner.</dd></div>
+            <div><dt>Delisted</dt><dd>The report is hidden from the public board but remains in your dashboard.</dd></div>
+          </dl>
+        </details>
+      </div>
+
       <section className="reports-section contact-requests-section" aria-labelledby="contact-requests-title">
         <div className="reports-heading">
           <div>
@@ -179,7 +205,7 @@ function UserDashboard({
         ) : (
           <p className="contact-requests-empty">No conversations yet. Open a report to contact its owner.</p>
         )}
-        <p className="data-disclaimer">Conversations and outcomes are stored only in this browser and are not shared with other devices.</p>
+        <p className="data-disclaimer">Prototype: conversations and outcomes are stored only in this browser. They do not sync to other devices or send external notifications.</p>
       </section>
 
       <section className="reports-section" aria-labelledby="reports-title">
@@ -189,10 +215,16 @@ function UserDashboard({
             <h2 id="reports-title">My reports</h2>
             <p>Review the items you’ve reported and their latest status.</p>
           </div>
-          <button className="new-report-button" onClick={() => setEditingReport(null)} type="button">
-            <span aria-hidden="true">+</span> New report
-          </button>
+          <div className="new-report-actions" aria-label="Create a report">
+            <button className="new-report-button new-lost-report-button" onClick={() => setEditingReport({ type: 'Lost' })} type="button">
+              <span aria-hidden="true">⌕</span> Report lost
+            </button>
+            <button className="new-report-button new-found-report-button" onClick={() => setEditingReport({ type: 'Found' })} type="button">
+              <span aria-hidden="true">✓</span> Report found
+            </button>
+          </div>
         </div>
+        {reportSaveMessage && <p className="report-save-success" role="status">{reportSaveMessage}</p>}
 
         {reports.length > 0 ? (
           <div className="reports-list">
@@ -240,17 +272,21 @@ function UserDashboard({
             <span aria-hidden="true">▤</span>
             <h3>No reports yet</h3>
             <p>Create a lost or found report and it will also appear on the campus listings board.</p>
-            <button className="new-report-button" onClick={() => setEditingReport(null)} type="button">Create your first report</button>
+            <div className="new-report-actions">
+              <button className="new-report-button new-lost-report-button" onClick={() => setEditingReport({ type: 'Lost' })} type="button">Report lost item</button>
+              <button className="new-report-button new-found-report-button" onClick={() => setEditingReport({ type: 'Found' })} type="button">Report found item</button>
+            </div>
           </div>
         )}
         <p className="data-disclaimer">
-          Prototype only: authentication and reports are stored in this browser and are not secure production services.
+          Prototype only: account data and reports are stored in this browser. They do not sync to other devices, and browser-local authentication is not secure production sign-in.
         </p>
       </section>
       {editingReport !== undefined && (
         <ReportForm
-          report={editingReport}
-          onCancel={() => setEditingReport(undefined)}
+          initialType={requestedReportType ?? editingReport?.type ?? 'Lost'}
+          report={editingReport?.id ? editingReport : null}
+          onCancel={cancelReport}
           onSave={saveReport}
         />
       )}

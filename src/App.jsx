@@ -77,6 +77,7 @@ function App() {
   const [items, setItems] = useState(initialItemsState.value)
   const [contactRequests, setContactRequests] = useState(initialContactRequestsState.value)
   const [session, setSession] = useState(initialSession.value)
+  const [requestedReportType, setRequestedReportType] = useState(null)
   const [storageError, setStorageError] = useState(
     initialItemsState.error || initialContactRequestsState.error || initialSession.error,
   )
@@ -359,6 +360,11 @@ function App() {
       : item))
   }
 
+  const requestReport = (type) => {
+    setRequestedReportType(type)
+    window.location.hash = '#login'
+  }
+
   const loginForm = (
     <div className="login-page">
       <LoginForm onSignIn={signIn} onSignUp={signUp} />
@@ -380,9 +386,11 @@ function App() {
                 items={items}
                 onDeleteReport={deleteReport}
                 onReplyToContactRequest={replyToContactRequest}
+                onReportRequestHandled={() => setRequestedReportType(null)}
                 onSaveReport={saveReport}
                 onToggleReportListing={toggleReportListing}
                 onUpdateContactOutcome={updateContactOutcome}
+                requestedReportType={requestedReportType}
                 session={session}
               />
             </div>
@@ -395,6 +403,8 @@ function App() {
             currentUserEmail={session?.email}
             items={items}
             onSendContactRequest={sendContactRequest}
+            onReportItem={requestReport}
+            onSaveReport={saveReport}
             session={session}
           />
         )}

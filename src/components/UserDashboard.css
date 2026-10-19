@@ -503,6 +503,31 @@
   line-height: 1;
 }
 
+.new-report-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.new-lost-report-button {
+  border-color: #5964d8;
+  background: #5964d8;
+}
+
+.new-lost-report-button:hover {
+  background: #4d58c8;
+}
+
+.new-found-report-button {
+  border-color: #31916b;
+  background: #31916b;
+}
+
+.new-found-report-button:hover {
+  background: #267d5b;
+}
+
 .reports-list {
   border-top: 1px solid #eef0f4;
 }
@@ -698,6 +723,57 @@
   line-height: 1.5;
 }
 
+.status-guide {
+  margin: 0 0 16px;
+  padding: 12px 15px;
+  border: 1px solid #dce2ef;
+  border-radius: 10px;
+  background: #fff;
+}
+
+.status-guide summary {
+  color: #4c5a73;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.status-guide dl {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 18px;
+  margin: 14px 0 2px;
+}
+
+.status-guide dl > div {
+  display: grid;
+  gap: 3px;
+}
+
+.status-guide dt {
+  color: #4e5bc3;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.status-guide dd {
+  margin: 0;
+  color: #707c91;
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+.report-save-success {
+  margin: 14px 0;
+  padding: 10px 13px;
+  border: 1px solid #bfe2cd;
+  border-radius: 8px;
+  color: #246748;
+  background: #eef9f2;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
 .reports-empty-state {
   display: grid;
   justify-items: center;
@@ -866,6 +942,20 @@
 
   .reports-section {
     padding: 18px 14px;
+  }
+
+  .status-guide dl {
+    grid-template-columns: 1fr;
+  }
+
+  .reports-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .new-report-actions {
+    width: 100%;
+    justify-content: flex-start;
   }
 
   .report-row {

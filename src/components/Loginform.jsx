@@ -44,7 +44,7 @@ function LoginForm({ onSignIn, onSignUp }) {
       </p>
 
       <div className="auth-notice" role="note">
-        Prototype authentication: your account and password hash are stored only in this browser. This is not secure production sign-in.
+        Prototype only: your account and password hash are stored in this browser, are not shared across devices, and this is not secure production sign-in.
       </div>
 
       {message && (
