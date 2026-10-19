@@ -1,0 +1,31 @@
+.site-footer {
+  display: flex;
+  min-height: 72px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  padding: 16px max(5vw, 22px);
+  border-top: 1px solid #e9edf3;
+  color: #798599;
+  background: #fff;
+  font-size: 11px;
+}
+
+.footer-brand {
+  color: #344158;
+  font-size: 13px;
+  font-weight: 750;
+  text-decoration: none;
+}
+
+.site-footer p {
+  margin: 0;
+}
+
+@media (max-width: 520px) {
+  .site-footer {
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 6px 14px;
+  }
+}

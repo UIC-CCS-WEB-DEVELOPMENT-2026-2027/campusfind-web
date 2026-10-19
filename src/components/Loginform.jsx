@@ -1,10 +1,9 @@
-import React from 'react';
 // 1. IMPORT YOUR IMAGE FILE HERE
 import signInImage from '../assets/SignI.jpg';
 
 export default function LoginForm() {
   return (
-    <div style={{ backgroundColor: '#fff', padding: '40px', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)', width: '400px', textAlign: 'center' }}>
+    <div style={{ backgroundColor: '#fff', padding: '40px', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)', width: 'min(100%, 400px)', textAlign: 'center' }}>
       <h2 style={{ marginBottom: '20px', fontFamily: 'cursive', color: '#374151' }}>Login</h2>
       
       {/* Google Login Button */}

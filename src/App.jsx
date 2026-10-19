@@ -1,32 +1,31 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Navbar from './components/Navbar'
 import LoginForm from './components/Loginform'
+import Dashboard from './components/Dashboard'
 import Footer from './components/Footer'
 import './App.css'
 
 function App() {
-  // You can keep this count state here if you need it later for custom logic
-  const [count, setCount] = useState(0)
+  const [isLoginPage, setIsLoginPage] = useState(window.location.hash === '#login')
+
+  useEffect(() => {
+    const syncPage = () => setIsLoginPage(window.location.hash === '#login')
+    window.addEventListener('hashchange', syncPage)
+    return () => window.removeEventListener('hashchange', syncPage)
+  }, [])
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', fontFamily: 'sans-serif' }}>
-      {/* 1. Top Navigation Bar */}
+    <div className="app-shell">
       <Navbar />
-      
-      {/* 2. Main Content Area with Gradient Background */}
-      <main style={{ 
-        flex: 1, 
-        background: 'linear-gradient(135deg, #93C5FD 0%, #C084FC 100%)', 
-        display: 'flex', 
-        justifyContent: 'center', 
-        alignItems: 'center',
-        padding: '40px 0'
-      }}>
-        {/* Your center login form component card */}
-        <LoginForm />
+      <main className="app-main">
+        {isLoginPage ? (
+          <div className="login-page">
+            <LoginForm />
+          </div>
+        ) : (
+          <Dashboard />
+        )}
       </main>
-      
-      {/* 3. Dark Bottom Footer Bar */}
       <Footer />
     </div>
   )
