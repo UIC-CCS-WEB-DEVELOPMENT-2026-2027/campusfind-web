@@ -28,6 +28,7 @@ function formatReportDate(value) {
 function ReportForm({ report, initialType = 'Lost', onSave, onCancel }) {
   const dialogRef = useRef(null)
   const previousFocusRef = useRef(document.activeElement)
+  const [isClosing, setIsClosing] = useState(false)
   const [name, setName] = useState(report?.name ?? '')
   const [type, setType] = useState(report?.type ?? initialType)
   const [category, setCategory] = useState(report?.category ?? '')
@@ -43,10 +44,18 @@ function ReportForm({ report, initialType = 'Lost', onSave, onCancel }) {
     }
   }, [])
 
+  const closeDialog = () => {
+    if (!isClosing) setIsClosing(true)
+  }
+
+  const finishCloseAnimation = (event) => {
+    if (event.target === event.currentTarget && isClosing) onCancel()
+  }
+
   const handleDialogKeyDown = (event) => {
     if (event.key === 'Escape') {
       event.preventDefault()
-      onCancel()
+      closeDialog()
       return
     }
     if (event.key !== 'Tab') return
@@ -104,7 +113,7 @@ function ReportForm({ report, initialType = 'Lost', onSave, onCancel }) {
     }
 
     const date = formatReportDate(dateValue)
-    onSave({
+    const saved = onSave({
       ...report,
       name: name.trim(),
       type,
@@ -121,10 +130,15 @@ function ReportForm({ report, initialType = 'Lost', onSave, onCancel }) {
       imageCredit: image.startsWith('data:') ? '' : report?.imageCredit ?? '',
       imageSource: image.startsWith('data:') ? '' : report?.imageSource ?? '',
     })
+    if (saved) closeDialog()
   }
 
   return (
-    <div className="report-modal-backdrop">
+    <div
+      className={`report-modal-backdrop${isClosing ? ' is-closing' : ''}`}
+      inert={isClosing}
+      onAnimationEnd={finishCloseAnimation}
+    >
       <section
         className="report-modal"
         onKeyDown={handleDialogKeyDown}
@@ -140,7 +154,7 @@ function ReportForm({ report, initialType = 'Lost', onSave, onCancel }) {
               {report ? 'Edit report' : `Report a ${type.toLowerCase()} item`}
             </h2>
           </div>
-          <button className="modal-close" type="button" aria-label="Close form" onClick={onCancel}>×</button>
+          <button className="modal-close" type="button" aria-label="Close form" onClick={closeDialog}>×</button>
         </div>
 
         {error && <p className="report-form-error" role="alert">{error}</p>}
@@ -200,7 +214,7 @@ function ReportForm({ report, initialType = 'Lost', onSave, onCancel }) {
             </div>
           )}
           <div className="report-form-actions">
-            <button className="cancel-report-button" onClick={onCancel} type="button">Cancel</button>
+            <button className="cancel-report-button" onClick={closeDialog} type="button">Cancel</button>
             <button className="save-report-button" type="submit">{report ? 'Save changes' : 'Publish report'}</button>
           </div>
         </form>

@@ -12,16 +12,21 @@ function ItemDetails({
   const [message, setMessage] = useState('')
   const [contactError, setContactError] = useState('')
   const [sent, setSent] = useState(false)
+  const [isClosing, setIsClosing] = useState(false)
   const [relatedReportId, setRelatedReportId] = useState(relatedReports[0]?.id ?? '')
 
   useEffect(() => {
     const closeOnEscape = (event) => {
-      if (event.key === 'Escape') onClose()
+      if (event.key === 'Escape' && !isClosing) setIsClosing(true)
     }
 
     window.addEventListener('keydown', closeOnEscape)
     return () => window.removeEventListener('keydown', closeOnEscape)
-  }, [onClose])
+  }, [isClosing])
+
+  const finishCloseAnimation = (event) => {
+    if (event.target === event.currentTarget && isClosing) onClose()
+  }
 
   const submitContactRequest = (event) => {
     event.preventDefault()
@@ -38,7 +43,12 @@ function ItemDetails({
   }
 
   return (
-    <div className="item-details-backdrop" onClick={onClose}>
+    <div
+      className={`item-details-backdrop${isClosing ? ' is-closing' : ''}`}
+      inert={isClosing}
+      onAnimationEnd={finishCloseAnimation}
+      onClick={() => setIsClosing(true)}
+    >
       <section
         className="item-details-dialog"
         role="dialog"
@@ -46,7 +56,7 @@ function ItemDetails({
         aria-labelledby="item-details-title"
         onClick={(event) => event.stopPropagation()}
       >
-        <button className="item-details-close" type="button" aria-label="Close item details" onClick={onClose} autoFocus>
+        <button className="item-details-close" type="button" aria-label="Close item details" onClick={() => setIsClosing(true)} autoFocus>
           ×
         </button>
         <div className={`item-details-image ${item.color ?? 'lavender'}`}>

@@ -395,18 +395,20 @@ function App() {
               />
             </div>
           ) : (
-            loginForm
+            <div className="route-transition" key="dashboard-login">{loginForm}</div>
           )
         ) : (
-          <Dashboard
-            contactRequests={contactRequests}
-            currentUserEmail={session?.email}
-            items={items}
-            onSendContactRequest={sendContactRequest}
-            onReportItem={requestReport}
-            onSaveReport={saveReport}
-            session={session}
-          />
+          <div className="route-transition" key="home">
+            <Dashboard
+              contactRequests={contactRequests}
+              currentUserEmail={session?.email}
+              items={items}
+              onSendContactRequest={sendContactRequest}
+              onReportItem={requestReport}
+              onSaveReport={saveReport}
+              session={session}
+            />
+          </div>
         )}
       </main>
       <Footer />

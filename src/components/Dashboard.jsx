@@ -85,9 +85,10 @@ function Dashboard({
 
   const saveReport = (report) => {
     if (onSaveReport(report)) {
-      setReportType(null)
       setReportSaved(true)
+      return true
     }
+    return false
   }
 
   return (

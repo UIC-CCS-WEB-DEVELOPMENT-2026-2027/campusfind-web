@@ -88,10 +88,85 @@
 }
 
 .contact-request-card {
-  padding: 14px;
   border: 1px solid #edf0f4;
   border-radius: 9px;
   background: #fcfcfe;
+}
+
+.conversation-summary {
+  display: flex;
+  min-height: 62px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 10px 13px;
+  cursor: pointer;
+  list-style: none;
+}
+
+.conversation-summary::-webkit-details-marker {
+  display: none;
+}
+
+.conversation-summary::after {
+  width: 8px;
+  height: 8px;
+  flex: 0 0 auto;
+  border-right: 2px solid #7c879a;
+  border-bottom: 2px solid #7c879a;
+  content: "";
+  transform: rotate(45deg) translateY(-2px);
+  transition: transform 150ms ease;
+}
+
+.contact-request-card[open] > .conversation-summary::after {
+  transform: rotate(225deg) translate(-2px, -1px);
+}
+
+.conversation-summary-main {
+  display: grid;
+  min-width: 0;
+  gap: 5px;
+}
+
+.conversation-summary-title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  color: #2c394e;
+  font-size: 12px;
+}
+
+.conversation-summary-preview {
+  overflow: hidden;
+  color: #7d889a;
+  font-size: 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.conversation-summary-meta {
+  display: grid;
+  flex: 0 0 auto;
+  justify-items: end;
+  gap: 5px;
+  color: #8791a2;
+  font-size: 9px;
+}
+
+.conversation-expand-label {
+  color: #5964c7;
+  font-weight: 650;
+}
+
+.conversation-thread-content {
+  padding: 0 13px 13px;
+  border-top: 1px solid #edf0f4;
+}
+
+.conversation-thread-content > .contact-request-heading {
+  padding-top: 10px;
 }
 
 .contact-request-heading,
@@ -332,6 +407,44 @@
   border-top: 1px solid #eef0f4;
   color: #7b8799;
   font-size: 12px;
+}
+
+.conversation-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 2px 0;
+  color: #788499;
+  font-size: 10px;
+}
+
+.conversation-pagination > div {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.conversation-pagination button {
+  min-height: 30px;
+  padding: 0 10px;
+  border: 1px solid #dce2ef;
+  border-radius: 7px;
+  color: #4d5b72;
+  background: #fff;
+  cursor: pointer;
+  font-size: 10px;
+  font-weight: 650;
+}
+
+.conversation-pagination button:hover:not(:disabled) {
+  border-color: #bbc5ea;
+  color: #4f5abe;
+}
+
+.conversation-pagination button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
 }
 
 .profile-card {
@@ -989,6 +1102,22 @@
 
   .conversation-reply-form {
     grid-template-columns: 1fr;
+  }
+
+  .conversation-summary {
+    align-items: flex-start;
+    gap: 8px;
+    padding: 10px;
+  }
+
+  .conversation-summary-meta time {
+    max-width: 78px;
+    text-align: right;
+  }
+
+  .conversation-pagination {
+    align-items: flex-start;
+    flex-direction: column;
   }
 
   .conversation-reply-form button {
