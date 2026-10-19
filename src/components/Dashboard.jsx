@@ -1,4 +1,4 @@
-import ReportLostForm from './components/ReportLostForm'
+import ReportLostForm from './ReportLostForm'
 import { useMemo, useState } from 'react'
 import sampleItems from '../data/items.json'
 import './Dashboard.css'
