@@ -16,3 +16,139 @@
   box-sizing: border-box;
   background: linear-gradient(135deg, #eaf3ff 0%, #f5edff 100%);
 }
+
+.login-card {
+  box-sizing: border-box;
+  width: min(100%, 430px);
+  padding: 36px;
+  border: 1px solid #e7e2f0;
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 14px 40px rgba(44, 37, 72, 0.1);
+}
+
+.login-eyebrow {
+  color: #7162bf;
+  font-size: 11px;
+  font-weight: 750;
+  letter-spacing: 1.4px;
+}
+
+.login-card h1 {
+  margin: 10px 0 8px;
+  color: #222b3f;
+  font-size: 28px;
+  letter-spacing: -0.7px;
+}
+
+.login-intro {
+  margin: 0 0 24px;
+  color: #6f798b;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.login-card form {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.login-card form label {
+  margin-top: 9px;
+  color: #3d485b;
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.login-card input {
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 1px solid #dfe3eb;
+  border-radius: 8px;
+  color: #293449;
+  font: inherit;
+  font-size: 14px;
+}
+
+.login-card input:focus {
+  border-color: #777fe0;
+  outline: 3px solid rgba(119, 127, 224, 0.15);
+}
+
+.google-login-button,
+.login-submit-button {
+  display: flex;
+  width: 100%;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border-radius: 8px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.google-login-button {
+  border: 1px solid #dfe3eb;
+  color: #3d485b;
+  background: #fff;
+}
+
+.google-login-button:hover {
+  background: #f8f9fc;
+}
+
+.login-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 20px 0;
+  color: #8a93a3;
+  font-size: 11px;
+}
+
+.login-divider::before,
+.login-divider::after {
+  height: 1px;
+  flex: 1;
+  background: #e9ecf1;
+  content: '';
+}
+
+.login-submit-button {
+  margin-top: 12px;
+  border: 0;
+  color: #fff;
+  background: #5964d8;
+}
+
+.login-submit-button:hover {
+  background: #4f59c7;
+}
+
+.login-notice {
+  margin: 8px 0 0;
+  padding: 11px 12px;
+  border-radius: 8px;
+  color: #694515;
+  background: #fff7e8;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.login-back-link {
+  display: inline-block;
+  margin-top: 22px;
+  color: #5964c8;
+  font-size: 13px;
+  font-weight: 650;
+}
+
+@media (max-width: 480px) {
+  .login-card {
+    padding: 28px 22px;
+  }
+}

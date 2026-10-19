@@ -2,18 +2,18 @@ import { useMemo, useState } from 'react'
 import sampleItems from '../data/items.json'
 import './Dashboard.css'
 
-const categories = ['All categories', ...new Set(sampleItems.map((item) => item.category))]
-const buildings = ['All locations', ...new Set(sampleItems.map((item) => item.location))]
-
-function Dashboard() {
+function Dashboard({ reportedItems = [] }) {
   const [query, setQuery] = useState('')
   const [type, setType] = useState('All items')
   const [category, setCategory] = useState('All categories')
   const [location, setLocation] = useState('All locations')
+  const items = useMemo(() => [...reportedItems, ...sampleItems], [reportedItems])
+  const categories = ['All categories', ...new Set(items.map((item) => item.category))]
+  const buildings = ['All locations', ...new Set(items.map((item) => item.location))]
 
   const filteredItems = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase()
-    return sampleItems.filter((item) => {
+    return items.filter((item) => {
       const matchesQuery =
         !normalizedQuery ||
         [item.name, item.category, item.location, item.description]
@@ -26,7 +26,7 @@ function Dashboard() {
         (location === 'All locations' || item.location === location)
       )
     })
-  }, [query, type, category, location])
+  }, [items, query, type, category, location])
 
   const clearFilters = () => {
     setQuery('')
@@ -45,7 +45,10 @@ function Dashboard() {
             One campus, one place to reconnect people with the things they’ve lost.
             Search recent reports or browse by item type.
           </p>
-          <a className="hero-link" href="#items">Explore recent items <span aria-hidden="true">↓</span></a>
+          <div className="hero-actions">
+            <a className="hero-link" href="#items">Explore recent items <span aria-hidden="true">↓</span></a>
+            <a className="hero-report-link" href="#report-lost-item">Report a lost item</a>
+          </div>
         </div>
         <div className="hero-art" aria-hidden="true">
           <span className="art-spark spark-one">✦</span>
@@ -67,7 +70,11 @@ function Dashboard() {
             <h2 id="browse-title">Recently reported</h2>
             <p>Browse the latest lost and found reports from around campus.</p>
           </div>
-          <span className="sample-note">Sample listings</span>
+          <span className="sample-note">
+            {reportedItems.length > 0
+              ? `${reportedItems.length} new ${reportedItems.length === 1 ? 'report' : 'reports'}`
+              : 'Sample listings'}
+          </span>
         </div>
 
         <div className="search-panel">
@@ -106,7 +113,7 @@ function Dashboard() {
                 aria-pressed={type === value}
               >
                 {value}
-                {value === 'All items' && <span className="tab-count">{sampleItems.length}</span>}
+                {value === 'All items' && <span className="tab-count">{items.length}</span>}
               </button>
             ))}
           </div>
@@ -121,26 +128,32 @@ function Dashboard() {
               <article className="item-card" key={item.id}>
                 <div className={`item-illustration ${item.color}`}>
                   <span className="item-image-fallback" aria-hidden="true">{item.icon}</span>
-                  <img
-                    className="item-image"
-                    src={item.image}
-                    alt={`Photo of ${item.name}`}
-                    loading="lazy"
-                    onError={(event) => {
-                      event.currentTarget.hidden = true
-                      const credit = event.currentTarget.parentElement.querySelector('.photo-credit')
-                      if (credit) credit.hidden = true
-                    }}
-                  />
-                  <a
-                    className="photo-credit"
-                    href={item.imageSource}
-                    target="_blank"
-                    rel="noreferrer"
-                    aria-label={`Photo credit: ${item.imageCredit}`}
-                  >
-                    {item.imageCredit}
-                  </a>
+                  {item.image && (
+                    <>
+                      <img
+                        className="item-image"
+                        src={item.image}
+                        alt={`Photo of ${item.name}`}
+                        loading="lazy"
+                        onError={(event) => {
+                          event.currentTarget.hidden = true
+                          const credit = event.currentTarget.parentElement.querySelector('.photo-credit')
+                          if (credit) credit.hidden = true
+                        }}
+                      />
+                      {item.imageSource && (
+                        <a
+                          className="photo-credit"
+                          href={item.imageSource}
+                          target="_blank"
+                          rel="noreferrer"
+                          aria-label={`Photo credit: ${item.imageCredit}`}
+                        >
+                          {item.imageCredit}
+                        </a>
+                      )}
+                    </>
+                  )}
                   <span className={`status-badge ${item.type.toLowerCase()}`}>{item.type}</span>
                 </div>
                 <div className="item-content">

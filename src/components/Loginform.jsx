@@ -1,36 +1,39 @@
-// 1. IMPORT YOUR IMAGE FILE HERE
-import signInImage from '../assets/SignI.jpg';
+import { useState } from 'react'
+import signInImage from '../assets/SignI.jpg'
 
 export default function LoginForm() {
+  const [message, setMessage] = useState('')
+
+  const showUnavailableMessage = (event) => {
+    event.preventDefault()
+    setMessage('Sign-in is not available in this demo yet. Authentication must be connected before you can submit a report.')
+  }
+
   return (
-    <div style={{ backgroundColor: '#fff', padding: '40px', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)', width: 'min(100%, 400px)', textAlign: 'center' }}>
-      <h2 style={{ marginBottom: '20px', fontFamily: 'cursive', color: '#374151' }}>Login</h2>
-      
-      {/* Google Login Button */}
-      <button style={{ width: '100%', padding: '10px', border: '1px solid #D1D5DB', borderRadius: '6px', backgroundColor: '#fff', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '10px', cursor: 'pointer', marginBottom: '15px' }}>
-        {/* 2. USE THE IMPORT VARIABLE NAME INSIDE CURLY BRACES */}
-        <img src={signInImage} alt="Google" width="16" height="16" style={{ objectFit: 'contain' }} /> 
+    <section className="login-card" aria-labelledby="login-title">
+      <span className="login-eyebrow">CAMPUSFIND ACCOUNT</span>
+      <h1 id="login-title">Sign in to continue</h1>
+      <p className="login-intro">Sign in is required before you can submit a lost-item report.</p>
+
+      <button className="google-login-button" type="button" onClick={showUnavailableMessage}>
+        <img src={signInImage} alt="" width="18" height="18" />
         Continue with Google
       </button>
-      
-      <div style={{ margin: '15px 0', color: '#9CA3AF', fontSize: '12px' }}>or</div>
 
-      {/* Form Fields */}
-      <form style={{ textAlign: 'left' }}>
-        <div style={{ marginBottom: '15px' }}>
-          <label style={{ display: 'block', fontSize: '12px', color: '#4B5563', marginBottom: '5px' }}>Email Address</label>
-          <input type="email" placeholder="you@example.com" style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #D1D5DB', boxSizing: 'border-box' }} />
-        </div>
-        
-        <div style={{ marginBottom: '20px' }}>
-          <label style={{ display: 'block', fontSize: '12px', color: '#4B5563', marginBottom: '5px' }}>Password</label>
-          <input type="password" placeholder="Enter your password" style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #D1D5DB', boxSizing: 'border-box' }} />
-        </div>
+      <div className="login-divider"><span>or use your email</span></div>
 
-        <button type="submit" style={{ backgroundColor: '#3B82F6', color: '#fff', width: '100%', padding: '10px', borderRadius: '6px', border: 'none', cursor: 'pointer' }}>
-        Sign In
-        </button>
+      <form onSubmit={showUnavailableMessage}>
+        <label htmlFor="loginEmail">Email address</label>
+        <input id="loginEmail" name="email" type="email" autoComplete="email" placeholder="you@example.com" required />
+
+        <label htmlFor="loginPassword">Password</label>
+        <input id="loginPassword" name="password" type="password" autoComplete="current-password" placeholder="Enter your password" required />
+
+        {message && <p className="login-notice" role="status">{message}</p>}
+        <button className="login-submit-button" type="submit">Sign in</button>
       </form>
-    </div>
-  );
+
+      <a className="login-back-link" href="#report-lost-item">Return to report form</a>
+    </section>
+  )
 }

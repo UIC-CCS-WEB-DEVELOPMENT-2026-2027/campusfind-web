@@ -53,15 +53,40 @@
   line-height: 1.7;
 }
 
+.hero-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px 22px;
+  margin-top: 24px;
+}
+
 .hero-link {
   display: inline-flex;
   align-items: center;
   gap: 9px;
-  margin-top: 24px;
   color: #4f55bd;
   font-size: 14px;
   font-weight: 700;
   text-decoration: none;
+}
+
+.hero-report-link {
+  display: inline-flex;
+  min-height: 42px;
+  align-items: center;
+  padding: 0 15px;
+  border-radius: 8px;
+  color: #fff;
+  background: #5964d8;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background 150ms ease;
+}
+
+.hero-report-link:hover {
+  background: #4f59c7;
 }
 
 .hero-link span {

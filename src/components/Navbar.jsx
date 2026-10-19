@@ -11,6 +11,7 @@ export default function Navbar() {
       <nav className="primary-nav" aria-label="Main navigation">
         <a href="#home">Home</a>
         <a href="#items">Browse items</a>
+        <a href="#report-lost-item">Report a Lost Item</a>
         <a href="#how-it-works">How it works</a>
       </nav>
 
