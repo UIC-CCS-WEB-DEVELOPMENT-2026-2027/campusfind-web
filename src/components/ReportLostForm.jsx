@@ -1,4 +1,4 @@
-
+import "./ReportLostForm.css";
 function ReportLostForm() {
   return (
     <div className="report-lost-page">
