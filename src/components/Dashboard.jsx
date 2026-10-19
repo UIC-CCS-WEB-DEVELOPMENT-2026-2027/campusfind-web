@@ -120,7 +120,27 @@ function Dashboard() {
             {filteredItems.map((item) => (
               <article className="item-card" key={item.id}>
                 <div className={`item-illustration ${item.color}`}>
-                  <span aria-hidden="true">{item.icon}</span>
+                  <span className="item-image-fallback" aria-hidden="true">{item.icon}</span>
+                  <img
+                    className="item-image"
+                    src={item.image}
+                    alt={`Photo of ${item.name}`}
+                    loading="lazy"
+                    onError={(event) => {
+                      event.currentTarget.hidden = true
+                      const credit = event.currentTarget.parentElement.querySelector('.photo-credit')
+                      if (credit) credit.hidden = true
+                    }}
+                  />
+                  <a
+                    className="photo-credit"
+                    href={item.imageSource}
+                    target="_blank"
+                    rel="noreferrer"
+                    aria-label={`Photo credit: ${item.imageCredit}`}
+                  >
+                    {item.imageCredit}
+                  </a>
                   <span className={`status-badge ${item.type.toLowerCase()}`}>{item.type}</span>
                 </div>
                 <div className="item-content">
