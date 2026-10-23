@@ -11,6 +11,7 @@
     "imageCredit": "Pexels",
     "imageSource": "https://www.pexels.com/search/headphones/",
     "color": "lavender",
+    "status": "Awaiting pickup",
     "description": "Found near the study tables by the east windows."
   },
   {
@@ -25,6 +26,7 @@
     "imageCredit": "Marc A. Hermann / MTA · CC BY 2.0",
     "imageSource": "https://commons.wikimedia.org/wiki/File:Student_OMNY_Card.jpg",
     "color": "blue",
+    "status": "Matched",
     "description": "Picked up at the main entrance. Name is withheld for verification."
   },
   {
@@ -67,6 +69,7 @@
     "imageCredit": "slgckgc · CC BY 2.0",
     "imageSource": "https://commons.wikimedia.org/wiki/File:Green_Soft-Covered_Composition_Notebook_(14822730560).jpg",
     "color": "mint",
+    "status": "In review",
     "description": "A5 notebook with class notes inside. Last seen in room 301."
   },
   {

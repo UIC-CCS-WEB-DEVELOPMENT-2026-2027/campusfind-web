@@ -1,36 +1,126 @@
-// 1. IMPORT YOUR IMAGE FILE HERE
-import signInImage from '../assets/SignI.jpg';
+import { useState } from 'react'
+import './Loginform.css'
 
-export default function LoginForm() {
+function LoginForm({ onSignIn, onSignUp }) {
+  const [mode, setMode] = useState('sign-in')
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [message, setMessage] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const isSignUp = mode === 'sign-up'
+
+  const submit = async (event) => {
+    event.preventDefault()
+    setMessage('')
+
+    if (isSignUp && password !== confirmPassword) {
+      setMessage('Passwords do not match.')
+      return
+    }
+
+    setIsSubmitting(true)
+    try {
+      if (isSignUp) {
+        await onSignUp(name, email, password)
+      } else {
+        await onSignIn(email, password)
+      }
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : 'Could not complete sign-in. Please try again.')
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
   return (
-    <div style={{ backgroundColor: '#fff', padding: '40px', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)', width: 'min(100%, 400px)', textAlign: 'center' }}>
-      <h2 style={{ marginBottom: '20px', fontFamily: 'cursive', color: '#374151' }}>Login</h2>
-      
-      {/* Google Login Button */}
-      <button style={{ width: '100%', padding: '10px', border: '1px solid #D1D5DB', borderRadius: '6px', backgroundColor: '#fff', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '10px', cursor: 'pointer', marginBottom: '15px' }}>
-        {/* 2. USE THE IMPORT VARIABLE NAME INSIDE CURLY BRACES */}
-        <img src={signInImage} alt="Google" width="16" height="16" style={{ objectFit: 'contain' }} /> 
-        Continue with Google
-      </button>
-      
-      <div style={{ margin: '15px 0', color: '#9CA3AF', fontSize: '12px' }}>or</div>
+    <section className="login-card" aria-labelledby="login-title">
+      <a className="login-brand" href="#home">Campus<span>Find</span></a>
+      <span className="eyebrow">CAMPUS LOST &amp; FOUND</span>
+      <h1 id="login-title">{isSignUp ? 'Create your account' : 'Welcome back'}</h1>
+      <p className="login-intro">
+        {isSignUp ? 'Create an account to report and manage campus items.' : 'Sign in to manage your campus reports.'}
+      </p>
 
-      {/* Form Fields */}
-      <form style={{ textAlign: 'left' }}>
-        <div style={{ marginBottom: '15px' }}>
-          <label style={{ display: 'block', fontSize: '12px', color: '#4B5563', marginBottom: '5px' }}>Email Address</label>
-          <input type="email" placeholder="you@example.com" style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #D1D5DB', boxSizing: 'border-box' }} />
-        </div>
-        
-        <div style={{ marginBottom: '20px' }}>
-          <label style={{ display: 'block', fontSize: '12px', color: '#4B5563', marginBottom: '5px' }}>Password</label>
-          <input type="password" placeholder="Enter your password" style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #D1D5DB', boxSizing: 'border-box' }} />
-        </div>
+      <div className="auth-notice" role="note">
+        Prototype only: your account and password hash are stored in this browser, are not shared across devices, and this is not secure production sign-in.
+      </div>
 
-        <button type="submit" style={{ backgroundColor: '#3B82F6', color: '#fff', width: '100%', padding: '10px', borderRadius: '6px', border: 'none', cursor: 'pointer' }}>
-        Sign In
+      {message && (
+        <div className="login-message" role="alert">
+          <span>{message}</span>
+        </div>
+      )}
+
+      <form className="login-fields" onSubmit={submit}>
+        {isSignUp && (
+          <>
+            <label htmlFor="account-name">Full name</label>
+            <input
+              autoComplete="name"
+              id="account-name"
+              maxLength={80}
+              onChange={(event) => setName(event.target.value)}
+              required
+              value={name}
+            />
+          </>
+        )}
+        <label htmlFor="account-email">Email address</label>
+        <input
+          autoComplete="email"
+          id="account-email"
+          name="email"
+          onChange={(event) => setEmail(event.target.value)}
+          placeholder="you@example.com"
+          required
+          type="email"
+          value={email}
+        />
+        <label htmlFor="account-password">Password</label>
+        <input
+          autoComplete={isSignUp ? 'new-password' : 'current-password'}
+          id="account-password"
+          minLength={8}
+          onChange={(event) => setPassword(event.target.value)}
+          required
+          type="password"
+          value={password}
+        />
+        {isSignUp && (
+          <>
+            <label htmlFor="confirm-password">Confirm password</label>
+            <input
+              autoComplete="new-password"
+              id="confirm-password"
+              onChange={(event) => setConfirmPassword(event.target.value)}
+              required
+              type="password"
+              value={confirmPassword}
+            />
+          </>
+        )}
+        <button className="login-submit" disabled={isSubmitting} type="submit">
+          {isSubmitting ? 'Please wait…' : isSignUp ? 'Create account' : 'Sign in'}
         </button>
       </form>
-    </div>
-  );
+
+      <p className="auth-switch">
+        {isSignUp ? 'Already have an account?' : 'New to CampusFind?'}
+        <button
+          type="button"
+          onClick={() => {
+            setMode(isSignUp ? 'sign-in' : 'sign-up')
+            setMessage('')
+          }}
+        >
+          {isSignUp ? 'Sign in' : 'Create account'}
+        </button>
+      </p>
+      <a className="login-back-link" href="#home">← Back to campus listings</a>
+    </section>
+  )
 }
+
+export default LoginForm

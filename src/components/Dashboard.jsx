@@ -1,38 +1,94 @@
 import { useMemo, useState } from 'react'
 import sampleItems from '../data/items.json'
+import ItemDetails from './ItemDetails'
+import ReportForm from './ReportForm'
 import './Dashboard.css'
 
-const categories = ['All categories', ...new Set(sampleItems.map((item) => item.category))]
-const buildings = ['All locations', ...new Set(sampleItems.map((item) => item.location))]
+const ITEMS_PER_PAGE = 6
 
-function Dashboard() {
+function Dashboard({
+  items = sampleItems,
+  currentUserEmail,
+  contactRequests,
+  onSendContactRequest,
+  onReportItem,
+  onSaveReport,
+  session,
+}) {
+  const listedItems = items.filter((item) => item.isListed !== false)
   const [query, setQuery] = useState('')
   const [type, setType] = useState('All items')
   const [category, setCategory] = useState('All categories')
   const [location, setLocation] = useState('All locations')
+  const [sortOrder, setSortOrder] = useState('newest')
+  const [activeOnly, setActiveOnly] = useState(false)
+  const [page, setPage] = useState(1)
+  const [selectedItem, setSelectedItem] = useState(null)
+  const [reportType, setReportType] = useState(null)
+  const [reportSaved, setReportSaved] = useState(false)
+  const categories = ['All categories', ...new Set(listedItems.map((item) => item.category))]
+  const buildings = ['All locations', ...new Set(listedItems.map((item) => item.location))]
 
   const filteredItems = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase()
-    return sampleItems.filter((item) => {
+    const matchingItems = listedItems.filter((item) => {
       const matchesQuery =
         !normalizedQuery ||
         [item.name, item.category, item.location, item.description]
           .some((value) => value.toLowerCase().includes(normalizedQuery))
+      const isActive = !['Matched', 'Claimed', 'Resolved'].includes(item.status)
 
       return (
         matchesQuery &&
         (type === 'All items' || item.type === type) &&
         (category === 'All categories' || item.category === category) &&
-        (location === 'All locations' || item.location === location)
+        (location === 'All locations' || item.location === location) &&
+        (!activeOnly || isActive)
       )
     })
-  }, [query, type, category, location])
+    return matchingItems.sort((first, second) => {
+      const firstTime = Date.parse(first.dateValue ?? first.date) || 0
+      const secondTime = Date.parse(second.dateValue ?? second.date) || 0
+      return sortOrder === 'newest' ? secondTime - firstTime : firstTime - secondTime
+    })
+  }, [listedItems, query, type, category, location, activeOnly, sortOrder])
+
+  const pageCount = Math.ceil(filteredItems.length / ITEMS_PER_PAGE)
+  const currentPage = Math.min(page, Math.max(pageCount, 1))
+  const pageItems = filteredItems.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE,
+  )
+  const firstPageNumber = Math.max(1, Math.min(currentPage - 2, pageCount - 4))
+  const visiblePageNumbers = Array.from(
+    { length: Math.min(pageCount, 5) },
+    (_, index) => firstPageNumber + index,
+  )
 
   const clearFilters = () => {
     setQuery('')
     setType('All items')
     setCategory('All categories')
     setLocation('All locations')
+    setSortOrder('newest')
+    setActiveOnly(false)
+    setPage(1)
+  }
+
+  const requestReport = (requestedType) => {
+    if (session) {
+      setReportType(requestedType)
+      return
+    }
+    onReportItem(requestedType)
+  }
+
+  const saveReport = (report) => {
+    if (onSaveReport(report)) {
+      setReportSaved(true)
+      return true
+    }
+    return false
   }
 
   return (
@@ -46,10 +102,17 @@ function Dashboard() {
             Search recent reports or browse by item type.
           </p>
           <a className="hero-link" href="#items">Explore recent items <span aria-hidden="true">↓</span></a>
+          <div className="hero-report-actions" aria-label="Report a campus item">
+            <button className="report-item-button lost-report-button" onClick={() => requestReport('Lost')} type="button">
+              <span aria-hidden="true">⌕</span> Report lost item
+            </button>
+            <button className="report-item-button found-report-button" onClick={() => requestReport('Found')} type="button">
+              <span aria-hidden="true">✓</span> Report found item
+            </button>
+          </div>
+          {!session && <p className="report-sign-in-note">Sign in is required to submit a report.</p>}
         </div>
         <div className="hero-art" aria-hidden="true">
-          <span className="art-spark spark-one">✦</span>
-          <span className="art-spark spark-two">✧</span>
           <div className="art-card art-card-back"><span>FOUND</span><b>Keys</b></div>
           <div className="art-card art-card-front">
             <span className="art-card-icon">🔎</span>
@@ -60,6 +123,10 @@ function Dashboard() {
         </div>
       </section>
 
+      <p className="prototype-notice" role="note">
+        Prototype: sample reports are for demonstration. Your reports and conversations are saved only in this browser; they do not sync to other devices or send notifications.
+      </p>
+
       <section className="browse-section" id="items" aria-labelledby="browse-title">
         <div className="section-heading">
           <div>
@@ -67,7 +134,10 @@ function Dashboard() {
             <h2 id="browse-title">Recently reported</h2>
             <p>Browse the latest lost and found reports from around campus.</p>
           </div>
-          <span className="sample-note">Sample listings</span>
+          <div className="listing-actions">
+            {currentUserEmail && <a className="manage-reports-link" href="#dashboard">Manage my reports</a>}
+            <span className="sample-note">Sample reports + this browser</span>
+          </div>
         </div>
 
         <div className="search-panel">
@@ -78,37 +148,70 @@ function Dashboard() {
               type="search"
               placeholder="Search by item, place, or keyword..."
               value={query}
-              onChange={(event) => setQuery(event.target.value)}
+              onChange={(event) => {
+                setQuery(event.target.value)
+                setPage(1)
+              }}
             />
           </label>
           <label className="select-field">
             <span className="visually-hidden">Filter by category</span>
-            <select value={category} onChange={(event) => setCategory(event.target.value)}>
+            <select value={category} onChange={(event) => {
+              setCategory(event.target.value)
+              setPage(1)
+            }}>
               {categories.map((value) => <option key={value}>{value}</option>)}
             </select>
           </label>
           <label className="select-field">
             <span className="visually-hidden">Filter by location</span>
-            <select value={location} onChange={(event) => setLocation(event.target.value)}>
+            <select value={location} onChange={(event) => {
+              setLocation(event.target.value)
+              setPage(1)
+            }}>
               {buildings.map((value) => <option key={value}>{value}</option>)}
+            </select>
+          </label>
+          <label className="select-field sort-field">
+            <span className="visually-hidden">Sort reports by date</span>
+            <select value={sortOrder} onChange={(event) => {
+              setSortOrder(event.target.value)
+              setPage(1)
+            }}>
+              <option value="newest">Sort: newest first</option>
+              <option value="oldest">Sort: oldest first</option>
             </select>
           </label>
         </div>
 
         <div className="list-toolbar">
-          <div className="item-tabs" role="group" aria-label="Filter item type">
+          <div className="item-tabs" role="group" aria-label="Filter item type and status">
             {['All items', 'Lost', 'Found'].map((value) => (
               <button
                 className={type === value ? 'item-tab active' : 'item-tab'}
                 key={value}
-                onClick={() => setType(value)}
+                onClick={() => {
+                  setType(value)
+                  setPage(1)
+                }}
                 type="button"
                 aria-pressed={type === value}
               >
                 {value}
-                {value === 'All items' && <span className="tab-count">{sampleItems.length}</span>}
+                {value === 'All items' && <span className="tab-count">{listedItems.length}</span>}
               </button>
             ))}
+            <button
+              aria-pressed={activeOnly}
+              className={activeOnly ? 'item-tab active' : 'item-tab'}
+              onClick={() => {
+                setActiveOnly((current) => !current)
+                setPage(1)
+              }}
+              type="button"
+            >
+              Still active
+            </button>
           </div>
           <span className="results-count" aria-live="polite">
             {filteredItems.length} {filteredItems.length === 1 ? 'item' : 'items'}
@@ -117,21 +220,41 @@ function Dashboard() {
 
         {filteredItems.length > 0 ? (
           <div className="item-grid">
-            {filteredItems.map((item) => (
+            {pageItems.map((item) => (
               <article className="item-card" key={item.id}>
-                <div className={`item-illustration ${item.color}`}>
-                  <span className="item-image-fallback" aria-hidden="true">{item.icon}</span>
-                  <img
-                    className="item-image"
-                    src={item.image}
-                    alt={`Photo of ${item.name}`}
-                    loading="lazy"
-                    onError={(event) => {
-                      event.currentTarget.hidden = true
-                      const credit = event.currentTarget.parentElement.querySelector('.photo-credit')
-                      if (credit) credit.hidden = true
-                    }}
-                  />
+                <button
+                  className="item-card-button"
+                  type="button"
+                  onClick={() => setSelectedItem(item)}
+                  aria-label={`View details for ${item.name}`}
+                >
+                  <div className={`item-illustration ${item.color}`}>
+                    <span className="item-image-fallback" aria-hidden="true">{item.icon}</span>
+                    {item.image && (
+                      <img
+                        className="item-image"
+                        src={item.image}
+                        alt=""
+                        loading="lazy"
+                      />
+                    )}
+                    <span className={`status-badge ${item.type.toLowerCase()}`}>{item.type}</span>
+                  </div>
+                  <div className="item-content">
+                    <div className="item-meta">
+                      <span>{item.category}</span>
+                      <span>{item.date}</span>
+                    </div>
+                    <h3>{item.name}</h3>
+                    <p>{item.description}</p>
+                    <div className="item-location"><span aria-hidden="true">⌖</span>{item.location}</div>
+                    {['Matched', 'Claimed'].includes(item.status) && (
+                      <span className={`item-lifecycle-status ${item.status.toLowerCase()}`}>{item.status}</span>
+                    )}
+                    <span className="item-view-details">View details <span aria-hidden="true">→</span></span>
+                  </div>
+                </button>
+                {item.imageCredit && item.imageSource && (
                   <a
                     className="photo-credit"
                     href={item.imageSource}
@@ -141,17 +264,7 @@ function Dashboard() {
                   >
                     {item.imageCredit}
                   </a>
-                  <span className={`status-badge ${item.type.toLowerCase()}`}>{item.type}</span>
-                </div>
-                <div className="item-content">
-                  <div className="item-meta">
-                    <span>{item.category}</span>
-                    <span>{item.date}</span>
-                  </div>
-                  <h3>{item.name}</h3>
-                  <p>{item.description}</p>
-                  <div className="item-location"><span aria-hidden="true">⌖</span>{item.location}</div>
-                </div>
+                )}
               </article>
             ))}
           </div>
@@ -163,7 +276,90 @@ function Dashboard() {
             <button className="clear-button" type="button" onClick={clearFilters}>Clear filters</button>
           </div>
         )}
+        {reportSaved && (
+          <p className="report-save-success" role="status">
+            Your report has been saved and added to the campus listings.
+          </p>
+        )}
+        {pageCount > 1 && (
+          <nav className="items-pagination" aria-label="Item listing pages">
+            <span className="pagination-summary">
+              Showing {(currentPage - 1) * ITEMS_PER_PAGE + 1}–{Math.min(currentPage * ITEMS_PER_PAGE, filteredItems.length)} of {filteredItems.length}
+            </span>
+            <div className="pagination-controls">
+              <button
+                className="pagination-arrow"
+                type="button"
+                disabled={currentPage === 1}
+                onClick={() => setPage(currentPage - 1)}
+              >
+                Previous
+              </button>
+              {firstPageNumber > 1 && (
+                <>
+                  <button type="button" onClick={() => setPage(1)} aria-label="Go to page 1">1</button>
+                  {firstPageNumber > 2 && <span className="pagination-ellipsis" aria-hidden="true">…</span>}
+                </>
+              )}
+              {visiblePageNumbers.map((pageNumber) => (
+                <button
+                  aria-current={currentPage === pageNumber ? 'page' : undefined}
+                  aria-label={`Go to page ${pageNumber}`}
+                  className={currentPage === pageNumber ? 'active' : ''}
+                  key={pageNumber}
+                  onClick={() => setPage(pageNumber)}
+                  type="button"
+                >
+                  {pageNumber}
+                </button>
+              ))}
+              {firstPageNumber + visiblePageNumbers.length - 1 < pageCount && (
+                <>
+                  {firstPageNumber + visiblePageNumbers.length < pageCount && (
+                    <span className="pagination-ellipsis" aria-hidden="true">…</span>
+                  )}
+                  <button type="button" onClick={() => setPage(pageCount)} aria-label={`Go to page ${pageCount}`}>
+                    {pageCount}
+                  </button>
+                </>
+              )}
+              <button
+                className="pagination-arrow"
+                type="button"
+                disabled={currentPage === pageCount}
+                onClick={() => setPage(currentPage + 1)}
+              >
+                Next
+              </button>
+            </div>
+          </nav>
+        )}
       </section>
+
+      {selectedItem && (
+        <ItemDetails
+          item={selectedItem}
+          onClose={() => setSelectedItem(null)}
+          onSendContactRequest={onSendContactRequest}
+          requestSent={contactRequests?.some((request) =>
+            request.reportId === selectedItem.id &&
+            request.senderEmail === currentUserEmail &&
+            ['Contacting', 'Matched'].includes(request.status))}
+          relatedReports={listedItems.filter((report) =>
+            report.ownerEmail === currentUserEmail &&
+            report.type !== selectedItem.type &&
+            !['Claimed', 'Delisted'].includes(report.status))}
+          session={session}
+        />
+      )}
+      {reportType && (
+        <ReportForm
+          initialType={reportType}
+          onCancel={() => setReportType(null)}
+          onSave={saveReport}
+          report={null}
+        />
+      )}
 
       <section className="how-it-works" id="how-it-works" aria-labelledby="how-title">
         <div>

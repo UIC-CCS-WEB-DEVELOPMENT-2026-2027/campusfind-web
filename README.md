@@ -9,7 +9,7 @@
 ---
 
 ## 📌 Project Overview
-**CampusFind** is an enterprise web application designed to centralize lost-and-found reporting across university buildings and departments. Students, faculty, and campus security staff often struggle with fragmented reporting across Facebook groups, group chats, or physical desks. CampusFind provides a unified, real-time searchable platform for logging lost/found items, verifying ownership claims, and tracking item statuses from report to retrieval.
+**CampusFind** is a responsive lost-and-found prototype for campus communities. It provides searchable sample listings, browser-local reporting and conversations, and a simulated item recovery flow. Production authentication, shared data, and real-time notifications are outside the scope of Phase 1.
 
 ---
 
@@ -25,8 +25,18 @@ During Phase 1 (Web Dev 1), CampusFind is engineered as a responsive Single-Page
 
 * **Frontend Framework:** React.js (Bootstrapped with Vite)
 * **Styling Framework:** Tailwind CSS / CSS3 (Flexbox & Grid Layouts)
-* **Data Layer:** Static sample listings in `src/data/items.json`, imported by the dashboard and filtered with React state. Sample photos are illustrative stock images with visible source credits; user-submitted photos and backend/database integration are planned for Phase 2.
+* **Data Layer:** Static sample listings in `src/data/items.json`, with browser-only account sign-in, report CRUD, conversations, and report outcomes persisted as JSON in `localStorage`. Users can link a Lost report with another account’s Found report, exchange messages in their dashboards, and mark the linked reports Matched, Claimed, or Delisted. Delisted reports stay in their owners’ dashboards but disappear from public listings. These interactions work only in the same browser and are not delivered to other devices or sent as email. Passwords are PBKDF2-hashed in the browser, but this is prototype authentication only; production authentication and database integration are planned for Phase 2. Sample photos are illustrative stock images with visible source credits.
 * **Deployment Pipeline:** Automated CI/CD via Vercel / Netlify linked directly to `main` branch
+
+### Try the browser-only recovery flow
+1. Create an account and publish a **Lost** report.
+2. Sign out, create a second account in the same browser, and publish a **Found** report with a photo.
+3. Browse to the Lost report, choose the Found report you created as the linked report, and send a message.
+4. Switch back to the Lost-report owner to reply in **My dashboard → Conversations**. Both participants can continue the conversation and mark the linked reports **Matched**, **Claimed**, or **Delisted**.
+
+This is a local simulation: account switching works in one browser, but messages and report changes do not sync between devices or reach a real backend.
+
+Use the **Report lost item** and **Report found item** actions on the home page or the matching actions in **My dashboard** to create reports. Signed-out users are asked to sign in first, and then continue with the selected report type. The public board can be sorted by report date and filtered to show reports that are still active. The dashboard includes explanations for report statuses.
 
 ---
 
