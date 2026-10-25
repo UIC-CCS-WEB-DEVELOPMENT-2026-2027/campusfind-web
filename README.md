@@ -1,69 +1,141 @@
-# CampusFind - Campus Lost & Found Intelligence Hub 🔍
+# CampusFind
 
-> **CS008.23 - Web Applications Development 1**  
-> **Instructor:** Mr. Joshua M. Cister  
-> **Organization:** UIC-CCS-WEB-DEVELOPMENT-2026-2027  
-> **Group Name:** Caban's Group  
-> **Team Members:** Caban, Antonio, Khee, Larutin, Villaquer  
+**Campus Lost and Found Platform**
 
----
+[**Live Demo: View CampusFind on Vercel**](https://campusfind-web-swart.vercel.app/)
 
-## 📌 Project Overview
-**CampusFind** is a responsive lost-and-found prototype for campus communities. It provides searchable sample listings, browser-local reporting and conversations, and a simulated item recovery flow. Production authentication, shared data, and real-time notifications are outside the scope of Phase 1.
+> **AI Disclosure:** Parts of this project's codebase and README documentation were developed with the assistance of Artificial Intelligence tools. AI was used to support development, code generation, UI/UX design, debugging, and documentation. The final implementation and project decisions remain subject to the team's review and verification.
 
 ---
 
-## 🚀 Live Production & Repository Links
-* **Live Web App (Vercel):** (https://campusfind-web-swart.vercel.app/)
-* **GitHub Repository:** (https://github.com/UIC-CCS-WEB-DEVELOPMENT-2026-2027/campusfind-web)
-* **Agile Kanban Board:** (https://github.com/orgs/UIC-CCS-WEB-DEVELOPMENT-2026-2027/projects/10)
+## Overview
+
+CampusFind addresses a common problem in university life: **reconnecting people with their lost belongings**. Students and faculty may struggle to find missing items or return found belongings when reports are scattered across social media posts, group chats, and physical lost-and-found desks.
+
+CampusFind provides a centralized platform where campus community members can browse lost and found reports, search by keywords, filter listings by category and location, and submit reports about lost or found items. Users can view item details and use the platform's contact request workflow to help coordinate the return of belongings.
+
+The project aims to make campus lost-and-found reporting more organized, accessible, and convenient while encouraging users to verify ownership before returning an item.
+
+### The Team
+
+### The Team
+
+- Caban
+- Antonio
+- Khee
+- Larutin
+- Villaquer
 
 ---
 
-## 🛠️ Phase 1 Architecture & Tech Stack
-During Phase 1 (Web Dev 1), CampusFind is engineered as a responsive Single-Page Application (SPA) driven by client-side state and mock JSON data models.
+## Key Features
 
-* **Frontend Framework:** React.js (Bootstrapped with Vite)
-* **Styling Framework:** Tailwind CSS / CSS3 (Flexbox & Grid Layouts)
-* **Data Layer:** Static sample listings in `src/data/items.json`, with browser-only account sign-in, report CRUD, conversations, and report outcomes persisted as JSON in `localStorage`. Users can link a Lost report with another account’s Found report, exchange messages in their dashboards, and mark the linked reports Matched, Claimed, or Delisted. Delisted reports stay in their owners’ dashboards but disappear from public listings. These interactions work only in the same browser and are not delivered to other devices or sent as email. Passwords are PBKDF2-hashed in the browser, but this is prototype authentication only; production authentication and database integration are planned for Phase 2. Sample photos are illustrative stock images with visible source credits.
-* **Deployment Pipeline:** Automated CI/CD via Vercel / Netlify linked directly to `main` branch
+### Lost and Found Listings
 
-### Try the browser-only recovery flow
-1. Create an account and publish a **Lost** report.
-2. Sign out, create a second account in the same browser, and publish a **Found** report with a photo.
-3. Browse to the Lost report, choose the Found report you created as the linked report, and send a message.
-4. Switch back to the Lost-report owner to reply in **My dashboard → Conversations**. Both participants can continue the conversation and mark the linked reports **Matched**, **Claimed**, or **Delisted**.
+- **Browse Item Reports:** View reported lost and found belongings on the campus board.
+- **Keyword Search:** Search for items using their names, categories, locations, or descriptions.
+- **Category and Location Filters:** Narrow down listings to find relevant reports more easily.
+- **Date Range Filtering:** Filter reports by age, including reports from the past week, two weeks, three weeks, one month, or older.
+- **Item Details:** Open individual reports to view additional information about an item.
+- **Pagination:** Browse listings in manageable groups rather than displaying every item on one page.
 
-This is a local simulation: account switching works in one browser, but messages and report changes do not sync between devices or reach a real backend.
+### Reporting and Contact Workflow
 
-Use the **Report lost item** and **Report found item** actions on the home page or the matching actions in **My dashboard** to create reports. Signed-out users are asked to sign in first, and then continue with the selected report type. The public board can be sorted by report date and filtered to show reports that are still active. The dashboard includes explanations for report statuses.
+- **Lost Item Reporting:** Submit a report for an item that has gone missing.
+- **Found Item Reporting:** Submit a report for an item found on campus.
+- **Report Management:** Signed-in users can access their dashboard to manage their reports.
+- **Contact Requests:** Use the contact request workflow to coordinate with the person associated with a report.
+- **Report Status Tracking:** Display relevant statuses to help users understand the progress of a report.
 
----
+### User Interface and Accessibility
 
-## 📅 4-Week Agile Sprint Timeline
-
-### Week 1: Enterprise Setup & Architecture
-- [x] Initialized Vite + React repository within the official GitHub Organization.
-- [x] Assigned team roles (Frontend, QA/Analyst, Systems Lead).
-- [x] Configured continuous integration on Vercel.
-- [x] Drafted project proposal document (`WebDev Galaxy Fighters- Proposal.docx`) and core `README.md`.
-
-### Week 2: Component Shells & UI Assembly
-- [x] Built core `.jsx` component hierarchy (`Navbar`, `ItemCard`, `ItemGrid`, `SearchFilterBar`).
-- [x] Developed responsive dashboard layout with building and category filters.
-- [x] Designed visual empty states ("No matching records found") and modal triggers.
-
-### Week 3: State Logic & Usability QA
-- [x] Wired client-side search logic (`useState`) to filter mock item data in real time.
-- [x] Implemented form validation guard clauses (`.trim()`, `e.preventDefault()`) on item submission and claim modals.
-- [x] Added claim status toggles (`Unclaimed` ➔ `Pending` ➔ `Claimed`).
-
-### Week 4: MVP Showcase & Terminal Defense
-- [x] Finalized live production build deployment on Vercel.
-- [x] Completed Phase 2 Relational Database Pitch & AI Usage Disclosure.
-- [x] Conducted 1-on-1 terminal code defense with Mr. Cister.
+- **Responsive Interface:** Organizes the dashboard, search tools, listings, and report forms into a consistent interface.
+- **Status Indicators:** Distinguishes lost and found items and displays applicable report statuses.
+- **Empty Search State:** Provides feedback when no reports match the current search or filters.
+- **Filter Reset:** Allows users to clear filters and return to the full set of listings.
 
 ---
 
-## 🗄️ Phase 2 Pitch: Relational Database & Backend Architecture
-In Phase 2 (Web Dev 2), CampusFind will transition from client-side mock data to a full-stack enterprise platform featuring a custom Node.js/Express API server and a MySQL/PostgreSQL relational database.
+## Tech Stack and Design System
+
+- **Frontend Framework:** React.js
+- **Development and Build Tool:** Vite
+- **Programming Language:** JavaScript (JSX)
+- **Styling:** CSS
+- **Data Storage:** Browser `localStorage` for supported user-generated data and report persistence.
+- **Sample Data:** JSON-based item records used to demonstrate the lost-and-found listing interface.
+- **Version Control:** Git and GitHub
+- **Deployment:** Vercel
+
+### Design Approach
+
+CampusFind uses a component-based design to organize the interface and make individual features easier to maintain.
+
+- **Navigation:** Provides access to the main areas of the application.
+- **Dashboard:** Displays the campus board, search bar, filters, item cards, and pagination.
+- **Reusable Components:** Separates features such as item details, report forms, and date filtering into individual components.
+- **Consistent Styling:** Uses shared CSS and component-specific styles to maintain a consistent visual experience.
+
+---
+
+## Project Structure
+
+The project uses a component-based folder structure to separate the main application, reusable interface components, sample data, and styling.
+
+```text
+src/
+├── assets/                 # Images and other static assets
+├── components/
+│   ├── Navbar.jsx          # Main navigation
+│   ├── Footer.jsx          # Page footer
+│   ├── Dashboard.jsx       # Main lost-and-found board
+│   ├── UserDashboard.jsx   # User report dashboard
+│   ├── LoginForm.jsx       # Login interface
+│   ├── ReportForm.jsx      # Lost/found report form
+│   ├── ItemDetails.jsx     # Individual item details
+│   ├── DateSorting.jsx     # Date range filter
+│   └── *.css               # Component stylesheets
+├── data/
+│   └── items.json          # Sample item listings
+├── App.jsx                 # Main application and page rendering
+├── App.css                 # Application-level styles
+└── main.jsx                # React entry point
+```
+
+*Note: This structure highlights the main files and components. Refer to the repository for the complete and current project structure.*
+
+---
+
+## Data Management
+
+CampusFind uses browser-based storage for supported user-generated data in its current prototype implementation.
+
+- **Sample Listings:** Initial item reports are provided through the project's JSON sample data.
+- **Local Persistence:** Supported user-generated reports and related information can be saved in the browser's `localStorage`.
+- **Page Refreshes:** Data saved in `localStorage` can persist when the page is refreshed in the same browser.
+- **Browser-Specific Storage:** Locally saved data is not automatically synchronized across different browsers or devices.
+
+> **Note on Data Storage:** CampusFind is a prototype intended for demonstration and educational purposes. It does not currently provide a centralized backend database or guarantee real-time synchronization between users and devices. Reports, conversations, and other user-generated data saved in browser storage may only be available in the browser where they were created. Clearing browser data, manually clearing `localStorage`, or using a different browser or device may cause locally stored information to become unavailable or be lost. Sample reports are for demonstration and should not be treated as verified real-world lost-and-found records. Users should independently verify an item's ownership before arranging its return. Do not rely on CampusFind as the sole record of an important report or as a guarantee that an item will be recovered.
+
+---
+
+## Project Scope and Future Development
+
+The current version demonstrates the core user interface and lost-and-found reporting workflow. Additional development may be needed before the platform can be used as a fully operational campus-wide service.
+
+Potential improvements include:
+
+- **Centralized Backend Database:** Store reports and user data in a shared database accessible to authorized users.
+- **Real Authentication:** Implement secure, production-ready account authentication and authorization.
+- **Cross-Device Synchronization:** Allow reports and status updates to remain consistent across devices.
+- **Notifications:** Notify users about relevant contact requests and report updates.
+- **Administrative Tools:** Provide authorized campus personnel with tools to moderate reports and manage the lost-and-found process.
+- **Enhanced Verification:** Introduce stronger procedures for verifying ownership and preventing fraudulent claims.
+
+---
+
+## Disclaimer
+
+CampusFind is an academic prototype and is not an official university lost-and-found service unless formally adopted by the institution. The application is provided for demonstration and educational purposes. Listing information may be incomplete, outdated, or unverified. Users are responsible for exercising caution when communicating with others and arranging item returns. Do not publish passwords, sensitive personal information, or confidential details in reports or messages.
+
+The development team does not guarantee that listed items will be found, returned, or successfully claimed. Any future production deployment should include appropriate security, privacy, data protection, and verification measures.
