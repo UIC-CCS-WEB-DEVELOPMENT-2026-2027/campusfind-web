@@ -1,7 +1,9 @@
+
 import { useMemo, useState } from 'react'
 import sampleItems from '../data/items.json'
 import ItemDetails from './ItemDetails'
 import ReportForm from './ReportForm'
+import DateSorting from './DateSorting'
 import './Dashboard.css'
 
 const ITEMS_PER_PAGE = 6
@@ -16,53 +18,142 @@ function Dashboard({
   session,
 }) {
   const listedItems = items.filter((item) => item.isListed !== false)
+
   const [query, setQuery] = useState('')
   const [type, setType] = useState('All items')
   const [category, setCategory] = useState('All categories')
   const [location, setLocation] = useState('All locations')
-  const [sortOrder, setSortOrder] = useState('newest')
+  const [sortOrder, setSortOrder] = useState('all')
   const [activeOnly, setActiveOnly] = useState(false)
   const [page, setPage] = useState(1)
   const [selectedItem, setSelectedItem] = useState(null)
   const [reportType, setReportType] = useState(null)
   const [reportSaved, setReportSaved] = useState(false)
-  const categories = ['All categories', ...new Set(listedItems.map((item) => item.category))]
-  const buildings = ['All locations', ...new Set(listedItems.map((item) => item.location))]
+
+  const categories = [
+    'All categories',
+    ...new Set(listedItems.map((item) => item.category)),
+  ]
+
+  const buildings = [
+    'All locations',
+    ...new Set(listedItems.map((item) => item.location)),
+  ]
 
   const filteredItems = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase()
+
     const matchingItems = listedItems.filter((item) => {
       const matchesQuery =
         !normalizedQuery ||
         [item.name, item.category, item.location, item.description]
-          .some((value) => value.toLowerCase().includes(normalizedQuery))
-      const isActive = !['Matched', 'Claimed', 'Resolved'].includes(item.status)
+          .some((value) =>
+            String(value ?? '')
+              .toLowerCase()
+              .includes(normalizedQuery)
+          )
+
+      const isActive = ![
+        'Matched',
+        'Claimed',
+        'Resolved',
+      ].includes(item.status)
 
       return (
         matchesQuery &&
         (type === 'All items' || item.type === type) &&
-        (category === 'All categories' || item.category === category) &&
-        (location === 'All locations' || item.location === location) &&
+        (category === 'All categories' ||
+          item.category === category) &&
+        (location === 'All locations' ||
+          item.location === location) &&
         (!activeOnly || isActive)
       )
     })
-    return matchingItems.sort((first, second) => {
-      const firstTime = Date.parse(first.dateValue ?? first.date) || 0
-      const secondTime = Date.parse(second.dateValue ?? second.date) || 0
-      return sortOrder === 'newest' ? secondTime - firstTime : firstTime - secondTime
-    })
-  }, [listedItems, query, type, category, location, activeOnly, sortOrder])
 
-  const pageCount = Math.ceil(filteredItems.length / ITEMS_PER_PAGE)
-  const currentPage = Math.min(page, Math.max(pageCount, 1))
+    if (sortOrder === 'all') {
+      return matchingItems
+    }
+
+    const today = new Date()
+    today.setHours(23, 59, 59, 999)
+
+    return matchingItems.filter((item) => {
+      const itemTime = Date.parse(item.dateValue ?? item.date)
+
+      if (Number.isNaN(itemTime)) {
+        return false
+      }
+
+      const itemDate = new Date(itemTime)
+
+      // Compare calendar dates so today's reports are included.
+      itemDate.setHours(0, 0, 0, 0)
+
+      const currentDate = new Date(today)
+      currentDate.setHours(0, 0, 0, 0)
+
+      const daysAgo = Math.floor(
+        (currentDate - itemDate) / (1000 * 60 * 60 * 24)
+      )
+
+      if (daysAgo < 0) {
+        return false
+      }
+
+      if (sortOrder === 'week') {
+        return daysAgo <= 7
+      }
+
+      if (sortOrder === 'twoWeeks') {
+        return daysAgo > 7 && daysAgo <= 14
+      }
+
+      if (sortOrder === 'threeWeeks') {
+        return daysAgo > 14 && daysAgo <= 21
+      }
+
+      if (sortOrder === 'month') {
+        return daysAgo > 21 && daysAgo <= 30
+      }
+
+      if (sortOrder === 'older') {
+        return daysAgo > 30
+      }
+
+      return true
+    })
+  }, [
+    listedItems,
+    query,
+    type,
+    category,
+    location,
+    activeOnly,
+    sortOrder,
+  ])
+
+  const pageCount = Math.ceil(
+    filteredItems.length / ITEMS_PER_PAGE
+  )
+
+  const currentPage = Math.min(
+    page,
+    Math.max(pageCount, 1)
+  )
+
   const pageItems = filteredItems.slice(
     (currentPage - 1) * ITEMS_PER_PAGE,
-    currentPage * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
   )
-  const firstPageNumber = Math.max(1, Math.min(currentPage - 2, pageCount - 4))
+
+  const firstPageNumber = Math.max(
+    1,
+    Math.min(currentPage - 2, pageCount - 4)
+  )
+
   const visiblePageNumbers = Array.from(
     { length: Math.min(pageCount, 5) },
-    (_, index) => firstPageNumber + index,
+    (_, index) => firstPageNumber + index
   )
 
   const clearFilters = () => {
@@ -70,7 +161,7 @@ function Dashboard({
     setType('All items')
     setCategory('All categories')
     setLocation('All locations')
-    setSortOrder('newest')
+    setSortOrder('all')
     setActiveOnly(false)
     setPage(1)
   }
@@ -80,6 +171,7 @@ function Dashboard({
       setReportType(requestedType)
       return
     }
+
     onReportItem(requestedType)
   }
 
@@ -88,6 +180,7 @@ function Dashboard({
       setReportSaved(true)
       return true
     }
+
     return false
   }
 
@@ -95,55 +188,122 @@ function Dashboard({
     <div className="dashboard">
       <section className="dashboard-hero" id="home">
         <div className="hero-copy">
-          <span className="eyebrow"><span className="eyebrow-dot" /> CAMPUS LOST &amp; FOUND</span>
-          <h1>Lost something?<br /><span>Let’s find it.</span></h1>
+          <span className="eyebrow">
+            <span className="eyebrow-dot" />
+            CAMPUS LOST &amp; FOUND
+          </span>
+
+          <h1>
+            Lost something?
+            <br />
+            <span>Let’s find it.</span>
+          </h1>
+
           <p>
-            One campus, one place to reconnect people with the things they’ve lost.
-            Search recent reports or browse by item type.
+            One campus, one place to reconnect people with the
+            things they’ve lost. Search recent reports or browse
+            by item type.
           </p>
-          <a className="hero-link" href="#items">Explore recent items <span aria-hidden="true">↓</span></a>
-          <div className="hero-report-actions" aria-label="Report a campus item">
-            <button className="report-item-button lost-report-button" onClick={() => requestReport('Lost')} type="button">
-              <span aria-hidden="true">⌕</span> Report lost item
+
+          <a className="hero-link" href="#items">
+            Explore recent items <span aria-hidden="true">↓</span>
+          </a>
+
+          <div
+            className="hero-report-actions"
+            aria-label="Report a campus item"
+          >
+            <button
+              className="report-item-button lost-report-button"
+              onClick={() => requestReport('Lost')}
+              type="button"
+            >
+              <span aria-hidden="true">⌕</span>
+              Report lost item
             </button>
-            <button className="report-item-button found-report-button" onClick={() => requestReport('Found')} type="button">
-              <span aria-hidden="true">✓</span> Report found item
+
+            <button
+              className="report-item-button found-report-button"
+              onClick={() => requestReport('Found')}
+              type="button"
+            >
+              <span aria-hidden="true">✓</span>
+              Report found item
             </button>
           </div>
-          {!session && <p className="report-sign-in-note">Sign in is required to submit a report.</p>}
+
+          {!session && (
+            <p className="report-sign-in-note">
+              Sign in is required to submit a report.
+            </p>
+          )}
         </div>
+
         <div className="hero-art" aria-hidden="true">
-          <div className="art-card art-card-back"><span>FOUND</span><b>Keys</b></div>
+          <div className="art-card art-card-back">
+            <span>FOUND</span>
+            <b>Keys</b>
+          </div>
+
           <div className="art-card art-card-front">
             <span className="art-card-icon">🔎</span>
-            <span className="art-card-label">A little help goes a long way</span>
-            <b>Find it.<br />Return it.</b>
+            <span className="art-card-label">
+              A little help goes a long way
+            </span>
+            <b>
+              Find it.
+              <br />
+              Return it.
+            </b>
             <span className="art-card-brand">campusfind</span>
           </div>
         </div>
       </section>
 
       <p className="prototype-notice" role="note">
-        Prototype: sample reports are for demonstration. Your reports and conversations are saved only in this browser; they do not sync to other devices or send notifications.
+        Prototype: sample reports are for demonstration. Your
+        reports and conversations are saved only in this browser;
+        they do not sync to other devices or send notifications.
       </p>
 
-      <section className="browse-section" id="items" aria-labelledby="browse-title">
+      <section
+        className="browse-section"
+        id="items"
+        aria-labelledby="browse-title"
+      >
         <div className="section-heading">
           <div>
             <span className="eyebrow">THE CAMPUS BOARD</span>
             <h2 id="browse-title">Recently reported</h2>
-            <p>Browse the latest lost and found reports from around campus.</p>
+            <p>
+              Browse the latest lost and found reports from around
+              campus.
+            </p>
           </div>
+
           <div className="listing-actions">
-            {currentUserEmail && <a className="manage-reports-link" href="#dashboard">Manage my reports</a>}
-            <span className="sample-note">Sample reports + this browser</span>
+            {currentUserEmail && (
+              <a
+                className="manage-reports-link"
+                href="#dashboard"
+              >
+                Manage my reports
+              </a>
+            )}
+
+            <span className="sample-note">
+              Sample reports + this browser
+            </span>
           </div>
         </div>
 
         <div className="search-panel">
           <label className="search-field">
             <span className="visually-hidden">Search items</span>
-            <span className="search-icon" aria-hidden="true">⌕</span>
+            <span className="search-icon" aria-hidden="true">
+              ⌕
+            </span>
+
             <input
               type="search"
               placeholder="Search by item, place, or keyword..."
@@ -154,41 +314,63 @@ function Dashboard({
               }}
             />
           </label>
+
           <label className="select-field">
-            <span className="visually-hidden">Filter by category</span>
-            <select value={category} onChange={(event) => {
-              setCategory(event.target.value)
-              setPage(1)
-            }}>
-              {categories.map((value) => <option key={value}>{value}</option>)}
+            <span className="visually-hidden">
+              Filter by category
+            </span>
+
+            <select
+              value={category}
+              onChange={(event) => {
+                setCategory(event.target.value)
+                setPage(1)
+              }}
+            >
+              {categories.map((value) => (
+                <option key={value}>{value}</option>
+              ))}
             </select>
           </label>
+
           <label className="select-field">
-            <span className="visually-hidden">Filter by location</span>
-            <select value={location} onChange={(event) => {
-              setLocation(event.target.value)
-              setPage(1)
-            }}>
-              {buildings.map((value) => <option key={value}>{value}</option>)}
+            <span className="visually-hidden">
+              Filter by location
+            </span>
+
+            <select
+              value={location}
+              onChange={(event) => {
+                setLocation(event.target.value)
+                setPage(1)
+              }}
+            >
+              {buildings.map((value) => (
+                <option key={value}>{value}</option>
+              ))}
             </select>
           </label>
-          <label className="select-field sort-field">
-            <span className="visually-hidden">Sort reports by date</span>
-            <select value={sortOrder} onChange={(event) => {
-              setSortOrder(event.target.value)
+
+          <DateSorting
+            sortOrder={sortOrder}
+            onSortChange={(value) => {
+              setSortOrder(value)
               setPage(1)
-            }}>
-              <option value="newest">Sort: newest first</option>
-              <option value="oldest">Sort: oldest first</option>
-            </select>
-          </label>
+            }}
+          />
         </div>
 
         <div className="list-toolbar">
-          <div className="item-tabs" role="group" aria-label="Filter item type and status">
+          <div
+            className="item-tabs"
+            role="group"
+            aria-label="Filter item type and status"
+          >
             {['All items', 'Lost', 'Found'].map((value) => (
               <button
-                className={type === value ? 'item-tab active' : 'item-tab'}
+                className={
+                  type === value ? 'item-tab active' : 'item-tab'
+                }
                 key={value}
                 onClick={() => {
                   setType(value)
@@ -198,12 +380,20 @@ function Dashboard({
                 aria-pressed={type === value}
               >
                 {value}
-                {value === 'All items' && <span className="tab-count">{listedItems.length}</span>}
+
+                {value === 'All items' && (
+                  <span className="tab-count">
+                    {listedItems.length}
+                  </span>
+                )}
               </button>
             ))}
+
             <button
               aria-pressed={activeOnly}
-              className={activeOnly ? 'item-tab active' : 'item-tab'}
+              className={
+                activeOnly ? 'item-tab active' : 'item-tab'
+              }
               onClick={() => {
                 setActiveOnly((current) => !current)
                 setPage(1)
@@ -213,8 +403,10 @@ function Dashboard({
               Still active
             </button>
           </div>
+
           <span className="results-count" aria-live="polite">
-            {filteredItems.length} {filteredItems.length === 1 ? 'item' : 'items'}
+            {filteredItems.length}{' '}
+            {filteredItems.length === 1 ? 'item' : 'items'}
           </span>
         </div>
 
@@ -228,8 +420,16 @@ function Dashboard({
                   onClick={() => setSelectedItem(item)}
                   aria-label={`View details for ${item.name}`}
                 >
-                  <div className={`item-illustration ${item.color}`}>
-                    <span className="item-image-fallback" aria-hidden="true">{item.icon}</span>
+                  <div
+                    className={`item-illustration ${item.color}`}
+                  >
+                    <span
+                      className="item-image-fallback"
+                      aria-hidden="true"
+                    >
+                      {item.icon}
+                    </span>
+
                     {item.image && (
                       <img
                         className="item-image"
@@ -238,22 +438,43 @@ function Dashboard({
                         loading="lazy"
                       />
                     )}
-                    <span className={`status-badge ${item.type.toLowerCase()}`}>{item.type}</span>
+
+                    <span
+                      className={`status-badge ${item.type.toLowerCase()}`}
+                    >
+                      {item.type}
+                    </span>
                   </div>
+
                   <div className="item-content">
                     <div className="item-meta">
                       <span>{item.category}</span>
                       <span>{item.date}</span>
                     </div>
+
                     <h3>{item.name}</h3>
                     <p>{item.description}</p>
-                    <div className="item-location"><span aria-hidden="true">⌖</span>{item.location}</div>
+
+                    <div className="item-location">
+                      <span aria-hidden="true">⌖</span>
+                      {item.location}
+                    </div>
+
                     {['Matched', 'Claimed'].includes(item.status) && (
-                      <span className={`item-lifecycle-status ${item.status.toLowerCase()}`}>{item.status}</span>
+                      <span
+                        className={`item-lifecycle-status ${item.status.toLowerCase()}`}
+                      >
+                        {item.status}
+                      </span>
                     )}
-                    <span className="item-view-details">View details <span aria-hidden="true">→</span></span>
+
+                    <span className="item-view-details">
+                      View details{' '}
+                      <span aria-hidden="true">→</span>
+                    </span>
                   </div>
                 </button>
+
                 {item.imageCredit && item.imageSource && (
                   <a
                     className="photo-credit"
@@ -272,20 +493,42 @@ function Dashboard({
           <div className="empty-state">
             <span aria-hidden="true">⌕</span>
             <h3>No matching items</h3>
-            <p>Try a different keyword or clear your filters to see all reports.</p>
-            <button className="clear-button" type="button" onClick={clearFilters}>Clear filters</button>
+            <p>
+              Try a different keyword or clear your filters to see
+              all reports.
+            </p>
+
+            <button
+              className="clear-button"
+              type="button"
+              onClick={clearFilters}
+            >
+              Clear filters
+            </button>
           </div>
         )}
+
         {reportSaved && (
           <p className="report-save-success" role="status">
-            Your report has been saved and added to the campus listings.
+            Your report has been saved and added to the campus
+            listings.
           </p>
         )}
+
         {pageCount > 1 && (
-          <nav className="items-pagination" aria-label="Item listing pages">
+          <nav
+            className="items-pagination"
+            aria-label="Item listing pages"
+          >
             <span className="pagination-summary">
-              Showing {(currentPage - 1) * ITEMS_PER_PAGE + 1}–{Math.min(currentPage * ITEMS_PER_PAGE, filteredItems.length)} of {filteredItems.length}
+              Showing {(currentPage - 1) * ITEMS_PER_PAGE + 1}–
+              {Math.min(
+                currentPage * ITEMS_PER_PAGE,
+                filteredItems.length
+              )}{' '}
+              of {filteredItems.length}
             </span>
+
             <div className="pagination-controls">
               <button
                 className="pagination-arrow"
@@ -295,17 +538,37 @@ function Dashboard({
               >
                 Previous
               </button>
+
               {firstPageNumber > 1 && (
                 <>
-                  <button type="button" onClick={() => setPage(1)} aria-label="Go to page 1">1</button>
-                  {firstPageNumber > 2 && <span className="pagination-ellipsis" aria-hidden="true">…</span>}
+                  <button
+                    type="button"
+                    onClick={() => setPage(1)}
+                    aria-label="Go to page 1"
+                  >
+                    1
+                  </button>
+
+                  {firstPageNumber > 2 && (
+                    <span
+                      className="pagination-ellipsis"
+                      aria-hidden="true"
+                    >
+                      …
+                    </span>
+                  )}
                 </>
               )}
+
               {visiblePageNumbers.map((pageNumber) => (
                 <button
-                  aria-current={currentPage === pageNumber ? 'page' : undefined}
+                  aria-current={
+                    currentPage === pageNumber ? 'page' : undefined
+                  }
                   aria-label={`Go to page ${pageNumber}`}
-                  className={currentPage === pageNumber ? 'active' : ''}
+                  className={
+                    currentPage === pageNumber ? 'active' : ''
+                  }
                   key={pageNumber}
                   onClick={() => setPage(pageNumber)}
                   type="button"
@@ -313,16 +576,30 @@ function Dashboard({
                   {pageNumber}
                 </button>
               ))}
-              {firstPageNumber + visiblePageNumbers.length - 1 < pageCount && (
+
+              {firstPageNumber + visiblePageNumbers.length - 1 <
+                pageCount && (
                 <>
-                  {firstPageNumber + visiblePageNumbers.length < pageCount && (
-                    <span className="pagination-ellipsis" aria-hidden="true">…</span>
+                  {firstPageNumber + visiblePageNumbers.length <
+                    pageCount && (
+                    <span
+                      className="pagination-ellipsis"
+                      aria-hidden="true"
+                    >
+                      …
+                    </span>
                   )}
-                  <button type="button" onClick={() => setPage(pageCount)} aria-label={`Go to page ${pageCount}`}>
+
+                  <button
+                    type="button"
+                    onClick={() => setPage(pageCount)}
+                    aria-label={`Go to page ${pageCount}`}
+                  >
                     {pageCount}
                   </button>
                 </>
               )}
+
               <button
                 className="pagination-arrow"
                 type="button"
@@ -341,17 +618,22 @@ function Dashboard({
           item={selectedItem}
           onClose={() => setSelectedItem(null)}
           onSendContactRequest={onSendContactRequest}
-          requestSent={contactRequests?.some((request) =>
-            request.reportId === selectedItem.id &&
-            request.senderEmail === currentUserEmail &&
-            ['Contacting', 'Matched'].includes(request.status))}
-          relatedReports={listedItems.filter((report) =>
-            report.ownerEmail === currentUserEmail &&
-            report.type !== selectedItem.type &&
-            !['Claimed', 'Delisted'].includes(report.status))}
+          requestSent={contactRequests?.some(
+            (request) =>
+              request.reportId === selectedItem.id &&
+              request.senderEmail === currentUserEmail &&
+              ['Contacting', 'Matched'].includes(request.status)
+          )}
+          relatedReports={listedItems.filter(
+            (report) =>
+              report.ownerEmail === currentUserEmail &&
+              report.type !== selectedItem.type &&
+              !['Claimed', 'Delisted'].includes(report.status)
+          )}
           session={session}
         />
       )}
+
       {reportType && (
         <ReportForm
           initialType={reportType}
@@ -361,26 +643,42 @@ function Dashboard({
         />
       )}
 
-      <section className="how-it-works" id="how-it-works" aria-labelledby="how-title">
+      <section
+        className="how-it-works"
+        id="how-it-works"
+        aria-labelledby="how-title"
+      >
         <div>
           <span className="eyebrow">A COMMUNITY EFFORT</span>
           <h2 id="how-title">Small steps. Happy reunions.</h2>
         </div>
+
         <div className="steps-grid">
           <article className="step-card">
             <span className="step-number">01</span>
             <h3>Search the board</h3>
-            <p>Look through recent reports and filter by item, category, or location.</p>
+            <p>
+              Look through recent reports and filter by item,
+              category, or location.
+            </p>
           </article>
+
           <article className="step-card">
             <span className="step-number">02</span>
             <h3>Report an item</h3>
-            <p>Share a clear description and where the item was lost or found.</p>
+            <p>
+              Share a clear description and where the item was lost
+              or found.
+            </p>
           </article>
+
           <article className="step-card">
             <span className="step-number">03</span>
             <h3>Verify and reunite</h3>
-            <p>Confirm ownership details before arranging a safe return on campus.</p>
+            <p>
+              Confirm ownership details before arranging a safe
+              return on campus.
+            </p>
           </article>
         </div>
       </section>
