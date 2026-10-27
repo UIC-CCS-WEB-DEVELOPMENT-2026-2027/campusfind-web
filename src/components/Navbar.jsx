@@ -1,6 +1,12 @@
 import './Navbar.css'
 
 export default function Navbar({ session, onSignOut }) {
+  const confirmSignOut = () => {
+    if (window.confirm('Are you sure you want to sign out? Your reports and conversations will remain saved in this browser.')) {
+      onSignOut()
+    }
+  }
+
   return (
     <header className="site-header">
       <a className="brand" href="#home" aria-label="CampusFind home">
@@ -19,7 +25,7 @@ export default function Navbar({ session, onSignOut }) {
         {session ? (
           <>
             <a className="account-name" href="#dashboard">{session.name}</a>
-            <button className="sign-in-link sign-out-button" onClick={onSignOut} type="button">Sign out</button>
+            <button className="sign-in-link sign-out-button" onClick={confirmSignOut} type="button">Sign out</button>
           </>
         ) : (
           <a className="sign-in-link" href="#login">Sign in</a>
